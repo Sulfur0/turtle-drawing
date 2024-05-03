@@ -26,14 +26,18 @@ class PolicyIteration():
     def compute_new_value_from_values(self, state, action):
         t = 1 # El ruido es 0 dado que el MDP es deterministico. Entonces t = 1 siempre
         reward, state_prime = self.mdp.do_action(action)
-        #if self.mdp.actions_collide(self.get_policy(state), self.get_policy(state_prime)):
-        #    return -1000
-        if self.positive_reward(state) and self.positive_reward(state_prime): # Jackspot! The value from this action is a positive reward!
+
+        # Si estoy en un estado terminal y me muevo a un estado terminal, entonces
+        # Jackspot! Esto lo hago para mostrarle a la tortuga que ya encontró el trazo
+        # y que entonces debe seguir avanzando por el mismo. 
+        #if self.positive_reward(state) and self.positive_reward(state_prime): 
+        if self.mdp.is_terminal(state) and self.mdp.is_terminal(state_prime):
             return 1000
+        
+        # En todos los otros casos, aplico la ecuación de Bellman para calcular los valores
+        # que van a guiar a la tortuga a la primera casilla del trazo. 
         return t * (self.mdp.grid[state[0]][state[1]] + self.discount * self.get_value(state_prime))
     
-    def positive_reward(self, state) -> bool:
-        return self.get_value(state) == 1 or self.get_value(state) == 10
 
     #7
     def policy_evaluation(self):
@@ -65,10 +69,11 @@ class PolicyIteration():
                         best_value = self.values[i][j]
                         for action in self.mdp.get_possible_actions(state):
                             new_value = self.compute_new_value_from_values(state, action)
+                            
                             self.mdp.do_action(action)
                             if new_value > best_value:
                                 best_value = new_value
-                                if self.values[i][j] != -1 and not self.positive_reward(state=(i, j)):
+                                if not self.mdp.is_terminal(state=(i, j)):
                                     self.values[i][j] = new_value
                                 best_action = action
                             self.mdp.state = state

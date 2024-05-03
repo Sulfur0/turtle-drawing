@@ -130,7 +130,8 @@ class Canvas:
     def is_terminal(self, state=None):
         if state == None:
             state = self.state
-        return self.grid[state[0]][state[1]] == 1 or self.grid[state[0]][state[1]] == -1 or self.grid[state[0]][state[1]] == 10
+        i, j = state
+        return self.grid[i][j] in [1, 10]
     
     #Función de soporte para pintar el ambiente
     def plot(self):
