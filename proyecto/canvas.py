@@ -1,27 +1,3 @@
-# -------------------------------------------------------------------------------
-# MIT License
-# 
-# Copyright (c) 2024
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# -------------------------------------------------------------------------------
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
@@ -131,7 +107,7 @@ class Canvas:
         if state == None:
             state = self.state
         i, j = state
-        return self.grid[i][j] in [1, 10]
+        return self.grid[i][j] in [1, 10, 20, 30, 40]
     
     #Función de soporte para pintar el ambiente
     def plot(self):
@@ -149,7 +125,7 @@ class Canvas:
         ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
         for j in range(len(self.grid[0])):
             for i in range(len(self.grid)):
-                if self.grid[i][j] == 1 or self.grid[i][j] == 10: # verde
+                if self.is_terminal(state=(i, j)): # verde
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
                 if self.grid[i][j] == None: # gris
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#6c7780"))
@@ -192,13 +168,13 @@ class Canvas:
         ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
         for j in range(len(self.grid[0])):
             for i in range(len(self.grid)):
-                if self.grid[i][j] == 1 or self.grid[i][j] == 10: # verde
+                if self.is_terminal(state=(i, j)): # verde
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
                 if self.grid[i][j] == None: # gris
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#6c7780"))
                 if self.grid[i][j] == -1: # rojo
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cc0000"))
-        #plt.scatter(self.ncols - self.state[1] - 1 + 0.5, self.nrows - self.state[0] - 1 +0.5, s = 100, color = "black", marker = "o", facecolor = "blue", edgecolors = "blue", zorder = 10)
+
         for i in range(len(self.grid)):
             for j in range(len(self.grid[0])):
                 if self.grid[i][j] == None:

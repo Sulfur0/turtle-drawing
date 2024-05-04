@@ -10,7 +10,6 @@ class PolicyIteration():
         self.iterations = iterations
         self.values = [[self.mdp.grid[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
         self.policy = [[random.choice(self.mdp.get_possible_actions((i, j))) if self.mdp.grid[i][j] != None else None for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
-        #self.policy = [['up' if self.mdp.grid[i][j] != None and self.mdp.grid[i][j] != 1 and self.mdp.grid[i][j] != -1 else None for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
     
     #2 
     def get_policy(self, state):
@@ -30,9 +29,9 @@ class PolicyIteration():
         # Si estoy en un estado terminal y me muevo a un estado terminal, entonces
         # Jackspot! Esto lo hago para mostrarle a la tortuga que ya encontró el trazo
         # y que entonces debe seguir avanzando por el mismo. 
-        #if self.positive_reward(state) and self.positive_reward(state_prime): 
         if self.mdp.is_terminal(state) and self.mdp.is_terminal(state_prime):
-            return 1000
+            #return 20
+            t = 20
         
         # En todos los otros casos, aplico la ecuación de Bellman para calcular los valores
         # que van a guiar a la tortuga a la primera casilla del trazo. 

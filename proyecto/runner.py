@@ -69,9 +69,9 @@ for iteration in range(iterations):
     policy = agent.policy[pivot_state[0]][pivot_state[1]]
 
     # If the actions collide, then disobey
-    #if agent.mdp.actions_collide(policy, last_action):
+    if agent.mdp.actions_collide(policy, last_action):
         #policy = agent.mdp.get_opposite(policy)
-    policy = random.choice(agent.mdp.get_possible_actions(pivot_state))
+        policy = random.choice(agent.mdp.get_possible_actions(pivot_state))
 
     print(f'from {pivot_state} run {policy}')
     if policy == 'down':
