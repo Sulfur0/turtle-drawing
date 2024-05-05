@@ -1,6 +1,8 @@
 import random
 
-#PolicyIteraction
+import warnings
+warnings.filterwarnings("ignore")
+
 class PolicyIteration():
     
     #1
@@ -11,17 +13,17 @@ class PolicyIteration():
         self.values = [[self.mdp.grid[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
         self.policy = [[random.choice(self.mdp.get_possible_actions((i, j))) if self.mdp.grid[i][j] != None else None for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
     
-    #2 
+
     def get_policy(self, state):
         i, j = state
         return self.policy[i][j]
     
-    #3
+    
     def get_value(self, state):
         i, j = state
         return self.values[i][j]
     
-    #3
+    
     def compute_new_value_from_values(self, state, action):
         t = 1 # El ruido es 0 dado que el MDP es deterministico. Entonces t = 1 siempre
         reward, state_prime = self.mdp.do_action(action)
@@ -38,7 +40,7 @@ class PolicyIteration():
         return t * (self.mdp.grid[state[0]][state[1]] + self.discount * self.get_value(state_prime))
     
 
-    #7
+    
     def policy_evaluation(self):
         for i in range(self.mdp.nrows):
             for j in range(self.mdp.ncols):

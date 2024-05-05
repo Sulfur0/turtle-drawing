@@ -1,6 +1,12 @@
 import turtle
 import random
 
+from utils import LoggerManager
+logger = LoggerManager().getLogger()
+
+import warnings
+warnings.filterwarnings("ignore")
+
 class Logo:
 
     def __init__(self, canvas, step_size=7):
@@ -92,11 +98,17 @@ class Logo:
         self._turtle.penup()
         
 
-
-    def go_to(self, position):
+    def go_to(self, position, draw=False):
+        '''
+        Este método hace que la tortuga salte hacia una posición diferente de la actual.
+        El salto puede dejar trazo o no dependiendo del valor del parámetro 'draw'.
+        '''
         logo_target = self.logo_coordinates(position)
+        if draw:
+            self._turtle.pendown()
         self._turtle.goto(logo_target[0], logo_target[1])
-        print(f'OK, jumping to {logo_target}')
+        self._turtle.penup()
+        logger.info(f'OK, jumping to {logo_target}')
 
 
     def prepare_pen(self):
@@ -109,9 +121,9 @@ class Logo:
         if self.canvas.is_terminal(state=self.canvas.state):
             self._turtle.pendown()
             self.visited_rewarded_states += [self.canvas.state,]
-            print(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
+            logger.info(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
         else:
-            print(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
+            logger.info(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
 
     
 
@@ -134,7 +146,7 @@ class Logo:
                 pivot_state = (random.randrange(0, self.canvas.nrows), random.randrange(0, self.canvas.ncols))
                 self.go_to(pivot_state)
                 agent.mdp.state = pivot_state
-                print(f'Collision! Jumping to a random state: {pivot_state}')
+                logger.info(f'Collision! Jumping to a random state: {pivot_state}')
                 last_action = None
             
             # Cuando no hay colisión, entonces la tortuga se mueve en la dirección que dicta la política en

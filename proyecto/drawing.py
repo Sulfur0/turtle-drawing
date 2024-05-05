@@ -2,8 +2,8 @@ from canvas import Canvas
 from policy import PolicyIteration
 from logo import Logo
 
-from utils import Logger
-logger = Logger().get_logger()
+from utils import LoggerManager
+logger = LoggerManager().getLogger()
 
 class Drawing:
 
