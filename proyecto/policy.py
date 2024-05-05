@@ -30,8 +30,8 @@ class PolicyIteration():
         # Jackspot! Esto lo hago para mostrarle a la tortuga que ya encontró el trazo
         # y que entonces debe seguir avanzando por el mismo. 
         if self.mdp.is_terminal(state) and self.mdp.is_terminal(state_prime):
-            #return 2000
-            t = 20
+            return 2000
+            #t = 20
         
         # En todos los otros casos, aplico la ecuación de Bellman para calcular los valores
         # que van a guiar a la tortuga a la primera casilla del trazo. 

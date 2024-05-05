@@ -110,39 +110,7 @@ class Canvas:
         if i >= len(self.grid) or j >= len(self.grid[0]):
             return False
         else:
-            return self.grid[i][j] in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 200, 800, 2000, 3000, 4000]
-    
-    #Función de soporte para pintar el ambiente
-    def plot(self):
-        fig1 = plt.figure(figsize=(20, 20))
-        ax1 = fig1.add_subplot(111, aspect='equal')
-        
-        # Lineas
-        for i in range(0, len(self.grid)+1):
-            ax1.axhline(i , linewidth=2, color="#2D2D33")
-        for i in range(len(self.grid[0])+1):
-            ax1.axvline(i , linewidth=2, color="#2D2D33")
-        
-        # Amarillo - inicio
-        (i,j)  = self.initial_state
-        ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
-        for j in range(len(self.grid[0])):
-            for i in range(len(self.grid)):
-                if self.is_terminal(state=(i, j)): # verde
-                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
-                if self.grid[i][j] == None: # gris
-                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#6c7780"))
-                if self.grid[i][j] == -1: # rojo
-                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cc0000"))
-
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid[0])):
-                if self.grid[i][j] == None:
-                    ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center')
-                else:
-                    ax1.text(j+0.5, self.nrows-i-1+0.5, str(round(self.grid[i][j],2)), ha='center', va='center')
-        plt.axis("off")
-        plt.show()
+            return self.grid[i][j] in [1, 10, 20, 200, 800, 2000, 3000, 4000]
 
 
     def plot_rainbow(self):

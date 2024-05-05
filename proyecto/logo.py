@@ -3,18 +3,32 @@ import random
 
 class Logo:
 
-    def __init__(self, env, step_size=2):
+    def __init__(self, env, step_size=5):
+        
         self.env = env
         self.step_size = step_size
         self._turtle = turtle.Turtle()
-        self._screen = turtle.Screen()
-        self._turtle.speed(20)
         self._turtle.penup()
-        self.go_to(self.env.state)
+        self._screen = turtle.Screen()
+        self._turtle.speed(30)
+        self._screen.bgcolor("black")
+        self._turtle.pencolor("yellow")
+        self.go_to(self.env.initial_state)
         self._turtle.left(90)
+        self.visited_rewarded_states = []
 
 
     def logo_coordinates(self, position):
+        '''
+        El sistema de coordenadas de la tortuga no es el mismo que el sistema de
+        coordenadas del canvas. Mientras que la tortuga se mueve sobre un sistema
+        cartesiano donde el origen está en el punto inferior izquerdo, el canvas
+        inicia en el punto superior izquerdo. 
+        
+        Además, el canvas representa estados mientras que la posición de la tortuga
+        debe tener en cuenta la distancia entre los estados que está definida por el 
+        tamaño del paso. 
+        '''
         i, j = position
         x = j * self.step_size
         y = i * self.step_size * -1
@@ -79,14 +93,22 @@ class Logo:
 
 
     def prepare_pen(self):
+        '''
+        Este método prepara el lápiz para el movimiento de acuerdo con las recompensas. 
+        Si existe una recompensa en el estado actual del ambiente, entonces se baja el lápiz
+        para dibujar. De lo contrario, el lápiz se deja levantado para no hacer trazos sobre
+        estados que no tienen recompensa porque no son parte del dibujo.
+        '''
         if self.env.is_terminal(state=self.env.state):
             self._turtle.pendown()
+            self.visited_rewarded_states += [self.env.state,]
             print(f'I am rewarded in this position {self.logo_coordinates(self.env.state)}!. Drawing')
         else:
             print(f'I am not rewarded in this position {self.logo_coordinates(self.env.state)}!. I won''t draw')
 
     
-    def draw(self, agent, iterations=3000):
+
+    def draw(self, agent, iterations=5000):
 
         state = (0, 0)
         agent.mdp.initial_state = state
@@ -97,13 +119,19 @@ class Logo:
         for _ in range(iterations):
             policy = agent.policy[pivot_state[0]][pivot_state[1]]
 
+            # Una colisión se da cuando la política en el estado de llegada de un movimiento le pide
+            # a la tortuga volver a la posición en la que se encuentra actualmente. Esto es una colisión
+            # porque se crea un ciclo infinito. En este caso, le pedimos a la tortuga que sale a un estado
+            # aleatorio diferente del tablero para abordar el dibujo por otro camino. 
             if agent.mdp.actions_collide(policy, last_action):
                 pivot_state = (random.randrange(0, self.env.nrows), random.randrange(0, self.env.ncols))
                 self.go_to(pivot_state)
                 agent.mdp.state = pivot_state
-                print('Collision. Jumping')
+                print(f'Collision! Jumping to a random state: {pivot_state}')
                 last_action = None
-
+            
+            # Cuando no hay colisión, entonces la tortuga se mueve en la dirección que dicta la política en
+            # en el estado actual.
             else:
                 if policy == 'down':
                     self.down()
@@ -117,5 +145,3 @@ class Logo:
                 last_action = policy
                 agent.mdp.do_action(policy)
                 pivot_state = agent.mdp.state
-
-            print(f'current position: pivot_state: {pivot_state}, mdp.state: {agent.mdp.state} run {policy}')
