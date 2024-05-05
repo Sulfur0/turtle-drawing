@@ -2,32 +2,36 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
 class Canvas:
+    '''
+    Esta clase representa el tablero con la solución al MDP. Recibe el tablero con las recompensas
+    y lo usa como el punto de partida para calcular los valores de cada estado con respecto a una política.
+    '''
 
-    def __init__(self, board):
-        '''
-        Se inicialiaza el tablero sobre el cual se mueve Logo. Este tablero entra por parámetro.
-        '''
-        self.nrows, self.ncols = len(board),len(board[0])
+    def __init__(self, rewards_board):
+    
+        self.nrows, self.ncols = len(rewards_board),len(rewards_board[0])
         self.dimensions = (self.nrows, self.ncols)
-        self.grid = [[None for _ in range(self.ncols)] for _ in range(self.nrows)]
+        self.values_board = [[None for _ in range(self.ncols)] for _ in range(self.nrows)]
 
         for i in range(self.nrows):
             for j in range(self.ncols):
-                cell = board[i][j]
+                cell = rewards_board[i][j]
                 if cell == ' ' :
-                    self.grid[i][j] = 0
+                    self.values_board[i][j] = 0
                 elif cell == '#' :
-                    self.grid[i][j] = None
+                    self.values_board[i][j] = None
                 elif cell == 'S' :
                     self.state = (i, j)
                     self.initial_state = (i, j)
-                    self.grid[i][j] = 0
+                    self.values_board[i][j] = 0
                 else :
-                    self.grid[i][j] = int(cell)
+                    self.values_board[i][j] = int(cell)
 
 
-    #2
     def get_current_state(self):
+        '''
+        Retorna el estado actual del canvas. 
+        '''
         return self.state
     
 
@@ -59,30 +63,30 @@ class Canvas:
         # El agente se puede mover hacia arriva si se encuentra en
         # la fila 1 o más abajo y si no hay un obstáculo en la casilla de arriba.
         # Sabemos que hay un obstáculo cuando la recompensa es 'None'.
-        if state[0] > 0 and self.grid[state[0] - 1][state[1]] != None:
+        if state[0] > 0 and self.values_board[state[0] - 1][state[1]] != None:
             actions += ['up',]
 
         # El agente se puede mover hacia abajo si se encuentra en
         # la penutltima fila o más arriba y si no hay un obstáculo en la casilla de arriba.
         # Sabemos que hay un obstáculo cuando la recompensa es 'None'.
-        if state[0] < self.nrows - 1 and self.grid[state[0] + 1][state[1]] != None:
+        if state[0] < self.nrows - 1 and self.values_board[state[0] + 1][state[1]] != None:
             actions += ['down',]
 
         # El agente se puede mover hacia la izquierda si se encuentra en
         # la primera columna o más hacia la derecha y si no hay un obstáculo en la casilla de la izquierda.
         # Sabemos que hay un obstáculo cuando la recompensa es 'None'.
-        if state[1] > 0  and self.grid[state[0]][state[1] - 1] != None:
+        if state[1] > 0  and self.values_board[state[0]][state[1] - 1] != None:
             actions += ['left',]
 
         # El agente se puede mover hacia la derecha si se encuentra en
         # la penutltima columna o más hacia la izquierda y si no hay un obstáculo en la casilla la derecha.
         # Sabemos que hay un obstáculo cuando la recompensa es 'None'.
-        if state[1] < self.ncols - 1 and self.grid[state[0]][state[1] + 1] != None:
+        if state[1] < self.ncols - 1 and self.values_board[state[0]][state[1] + 1] != None:
             actions += ['right',]
 
         return actions
     
-    #4
+
     def do_action(self, action):
         if action in self.get_possible_actions(self.state):
             new_state = None
@@ -96,7 +100,7 @@ class Canvas:
                 new_state = (self.state[0], self.state[1] - 1)
             self.state = new_state
 
-        return self.grid[self.state[0]][self.state[1]], self.state
+        return self.values_board[self.state[0]][self.state[1]], self.state
 
     #5
     def reset(self):
@@ -107,10 +111,10 @@ class Canvas:
         if state == None:
             state = self.state
         i, j = state
-        if i >= len(self.grid) or j >= len(self.grid[0]):
+        if i >= len(self.values_board) or j >= len(self.values_board[0]):
             return False
         else:
-            return self.grid[i][j] in [1, 10, 20, 200, 800, 2000, 3000, 4000]
+            return self.values_board[i][j] in [1, 10, 20, 200, 800, 2000, 3000, 4000]
 
 
     def plot_rainbow(self):
@@ -118,36 +122,36 @@ class Canvas:
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
-        for i in range(0, len(self.grid)+1):
+        for i in range(0, len(self.values_board)+1):
             ax1.axhline(i , linewidth=2, color="#2D2D33")
-        for i in range(len(self.grid[0])+1):
+        for i in range(len(self.values_board[0])+1):
             ax1.axvline(i , linewidth=2, color="#2D2D33")
         
         # Amarillo - inicio
         (i,j)  = self.initial_state
         ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
-        for j in range(len(self.grid[0])):
-            for i in range(len(self.grid)):
+        for j in range(len(self.values_board[0])):
+            for i in range(len(self.values_board)):
                 if self.is_terminal(state=(i, j)): # verde
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
-                elif self.grid[i][j] < 0: # rojo
+                elif self.values_board[i][j] < 0: # rojo
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#f0837f"))
-                elif self.grid[i][j] >= 0 and self.grid[i][j] < 3: #amarillo
+                elif self.values_board[i][j] >= 0 and self.values_board[i][j] < 3: #amarillo
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#eef593"))
-                elif self.grid[i][j] >= 3 and self.grid[i][j] < 5: #verde claro
+                elif self.values_board[i][j] >= 3 and self.values_board[i][j] < 5: #verde claro
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cdf7b5"))
-                elif self.grid[i][j] >= 5 and self.grid[i][j] < 10: #verde claro
+                elif self.values_board[i][j] >= 5 and self.values_board[i][j] < 10: #verde claro
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#b7f792"))
-                elif self.grid[i][j] >= 10: #verde mas oscuro
+                elif self.values_board[i][j] >= 10: #verde mas oscuro
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#9cf768"))
                 
 
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid[0])):
-                if self.grid[i][j] == None:
+        for i in range(len(self.values_board)):
+            for j in range(len(self.values_board[0])):
+                if self.values_board[i][j] == None:
                     ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center', fontsize=6)
                 else:
-                    ax1.text(j+0.5, self.nrows-i-1+0.5, str(round(self.grid[i][j], 1)), ha='center', va='center', fontsize=6)
+                    ax1.text(j+0.5, self.nrows-i-1+0.5, str(round(self.values_board[i][j], 1)), ha='center', va='center', fontsize=6)
         plt.axis("off")
         plt.show()
 
@@ -169,26 +173,26 @@ class Canvas:
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
-        for i in range(0, len(self.grid)+1):
+        for i in range(0, len(self.values_board)+1):
             ax1.axhline(i , linewidth=2, color="#2D2D33")
-        for i in range(0, len(self.grid[0])+1):
+        for i in range(0, len(self.values_board[0])+1):
             ax1.axvline(i , linewidth=2, color="#2D2D33")
         
         # Amarillo - inicio
         (i,j)  = self.initial_state
         ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
-        for j in range(len(self.grid[0])):
-            for i in range(len(self.grid)):
+        for j in range(len(self.values_board[0])):
+            for i in range(len(self.values_board)):
                 if self.is_terminal(state=(i, j)): # verde
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
-                if self.grid[i][j] == None: # gris
+                if self.values_board[i][j] == None: # gris
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#6c7780"))
-                if self.grid[i][j] == -1: # rojo
+                if self.values_board[i][j] == -1: # rojo
                     ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cc0000"))
 
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid[0])):
-                if self.grid[i][j] == None:
+        for i in range(len(self.values_board)):
+            for j in range(len(self.values_board[0])):
+                if self.values_board[i][j] == None:
                     ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center')
                 else:
                     ax1.text(j+0.5, self.nrows-i-1+0.5, self.print_policy(i,j, policy), ha='center', va='center')

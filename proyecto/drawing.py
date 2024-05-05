@@ -11,22 +11,22 @@ class Drawing:
         self.rows, self.columns = 50, 50
 
         # Inicializo el tablero con todas las recompensas en cero
-        self.board = [[' ' for _ in range(self.columns)] for _ in range(self.rows)]
+        self.rewards_board = [[' ' for _ in range(self.columns)] for _ in range(self.rows)]
 
         # Defino las recompensas de acuerdo a la figura que queremos dibujar.
         for i in range(self.rows):
             for j in range(self.columns):
                 if i == 10 and j >= 10 and j <= 40:
-                    self.board[i][j] = '+1'
+                    self.rewards_board[i][j] = '+1'
                 if i == 40 and j >= 10 and j <= 40:
-                    self.board[i][j] = '+1'
+                    self.rewards_board[i][j] = '+1'
                 if j == 40 and i >= 10 and i <= 40:
-                    self.board[i][j] = '+1'
+                    self.rewards_board[i][j] = '+1'
                 if j == 10 and i >= 10 and i <= 40:
-                    self.board[i][j] = '+1'
+                    self.rewards_board[i][j] = '+1'
 
-        self.board[0][0] = 'S'
-        self.canvas = Canvas(self.board)
+        self.rewards_board[0][0] = 'S'
+        self.canvas = Canvas(self.rewards_board)
 
     
     def train(self):

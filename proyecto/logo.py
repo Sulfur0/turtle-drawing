@@ -128,6 +128,12 @@ class Logo:
     
 
     def draw(self, agent, iterations=5000):
+        '''
+        Este método usa la política en el agente para dibujar. El algoritmo de dibujo se basa en iteraciones, 
+        cada iteración da un paso desde el estado actual en la dirección dictada por la política. 
+        En algunos casos hay colisiones y es necesario desobedecer la política y saltar a otro lugar del tablero para 
+        evitar ciclos infinitos. 
+        '''
 
         state = (0, 0)
         agent.mdp.initial_state = state

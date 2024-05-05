@@ -10,8 +10,8 @@ class PolicyIteration():
         self.mdp = mdp
         self.discount = discount
         self.iterations = iterations
-        self.values = [[self.mdp.grid[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
-        self.policy = [[random.choice(self.mdp.get_possible_actions((i, j))) if self.mdp.grid[i][j] != None else None for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
+        self.values = [[self.mdp.values_board[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
+        self.policy = [[random.choice(self.mdp.get_possible_actions((i, j))) if self.mdp.values_board[i][j] != None else None for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
     
 
     def get_policy(self, state):
@@ -37,7 +37,7 @@ class PolicyIteration():
         
         # En todos los otros casos, aplico la ecuación de Bellman para calcular los valores
         # que van a guiar a la tortuga a la primera casilla del trazo. 
-        return t * (self.mdp.grid[state[0]][state[1]] + self.discount * self.get_value(state_prime))
+        return t * (self.mdp.values_board[state[0]][state[1]] + self.discount * self.get_value(state_prime))
     
 
     
@@ -45,7 +45,7 @@ class PolicyIteration():
         for i in range(self.mdp.nrows):
             for j in range(self.mdp.ncols):
                 state = (i, j)
-                if self.mdp.grid[i][j] != None:
+                if self.mdp.values_board[i][j] != None:
                     self.mdp.state = state
                     if not self.mdp.is_terminal():
                         # Calculo la ecuación de Bellman para cada uno de los estados a los que puedo llegar
@@ -64,7 +64,7 @@ class PolicyIteration():
             for i in range(self.mdp.nrows):
                 for j in range(self.mdp.ncols):
                     state = (i, j)
-                    if self.mdp.grid[i][j] != None:
+                    if self.mdp.values_board[i][j] != None:
                         self.mdp.state = state
                         best_action = self.get_policy(state)
                         best_value = self.values[i][j]
@@ -82,4 +82,4 @@ class PolicyIteration():
                         self.policy[i][j] = best_action
 
 
-        self.mdp.grid = [[self.values[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
+        self.mdp.values_board = [[self.values[i][j] for j in range(self.mdp.ncols)] for i in range(self.mdp.nrows)]
