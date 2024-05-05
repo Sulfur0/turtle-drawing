@@ -9,44 +9,34 @@ steps = 10
 b = 90
 _turtle.speed(3)
 _turtle.pendown()
-_turtle.goto(0, 0)
 _turtle.showturtle()
-_turtle.left(90)
 
-def run_down():
-    print('down')
-    _turtle.right(180)
-    _turtle.forward(steps)
-    _turtle.left(180)
 
-def run_up():
-    _turtle.forward(steps)
+#_turtle.goto(50, -50)
 
-def run_left():
-    _turtle.left(90)
-    _turtle.forward(steps)
-    _turtle.right(90)
 
-def run_right():
-    _turtle.right(90)
-    _turtle.forward(steps)
-    _turtle.left(90)
+#def logo_coordinates(i, j):
+#    x = j
+#    y = -i
+#    return x, y
 
-run_right()
+def logo_coordinates(i, j):
+        #i, j = position
+        x = j
+        y = i * -1
+        return x, y
 
-run_up()
-run_up()
-run_up()
-run_up()
-run_up()
-run_up()
-run_up()
-run_up()
-run_up()
 
-run_down()
-run_down()
-run_down()
-run_down()
+_turtle.goto(logo_coordinates(23, 46))
+#_turtle.goto(logo_coordinates(0, 50))
+#_turtle.goto(logo_coordinates(50, 50))
+
+#i = 0
+
+#while i < 100: 
+#    _turtle.forward(steps)
+#    _turtle.right(b)
+#    steps += 5
+#    i += 1
     
 turtle.done()

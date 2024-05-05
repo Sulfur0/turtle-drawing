@@ -1,5 +1,7 @@
 from canvas import Canvas
 from policy import PolicyIteration
+from logo import Logo
+import random
 
 rows, columns = 50, 50
 
@@ -25,68 +27,38 @@ env = Canvas(board)
 agent = PolicyIteration(env)
 agent.policy_iteration()
 
-iterations = 1000
+iterations = 30
 state = (0, 0)
 agent.mdp.initial_state = state
 agent.mdp.state = state
 pivot_state = state
-steps = 1
 
-import turtle
-
-_turtle = turtle.Turtle()
-_screen = turtle.Screen()
-_turtle.speed(100)
-_turtle.pendown()
-_turtle.goto(0, 0)
-_screen.bgcolor("black")
-_turtle.pencolor("yellow")
-_turtle.left(90)
-
-def run_down():
-    _turtle.right(180)
-    _turtle.forward(steps)
-    _turtle.left(180)
-
-def run_up():
-    _turtle.forward(steps)
-
-def run_left():
-    _turtle.left(90)
-    _turtle.forward(steps)
-    _turtle.right(90)
-
-def run_right():
-    _turtle.right(90)
-    _turtle.forward(steps)
-    _turtle.left(90)
-
+logo = Logo()
 last_action = None
-
-import random
 
 for iteration in range(iterations):
     policy = agent.policy[pivot_state[0]][pivot_state[1]]
 
-    # If the actions collide, then disobey
     if agent.mdp.actions_collide(policy, last_action):
-        #policy = agent.mdp.get_opposite(policy)
-        policy = random.choice(agent.mdp.get_possible_actions(pivot_state))
+        pivot_state = (random.randrange(rows), random.randrange(columns))
+        logo.go_to(pivot_state)
+        agent.mdp.state = pivot_state
+        print('Collision. Jumping')
+        last_action = None
 
-    print(f'from {pivot_state} run {policy}')
-    if policy == 'down':
-        run_down()
-    if policy == 'up':
-        run_up()
-    if policy == 'left':
-        run_left()
-    if policy == 'right':
-        run_right()
+    else:
+        if policy == 'down':
+            logo.down()
+        if policy == 'up':
+            logo.up()
+        if policy == 'left':
+            logo.left()
+        if policy == 'right':
+            logo.right()
 
-    last_action = policy
-    agent.mdp.do_action(policy)
-    pivot_state = agent.mdp.state
+        last_action = policy
+        agent.mdp.do_action(policy)
+        pivot_state = agent.mdp.state
 
+    print(f'current position: pivot_state: {pivot_state}, mdp.state: {agent.mdp.state} run {policy}')
 
-
-turtle.done()

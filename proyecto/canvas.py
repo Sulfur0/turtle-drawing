@@ -107,7 +107,10 @@ class Canvas:
         if state == None:
             state = self.state
         i, j = state
-        return self.grid[i][j] in [1, 10, 20, 30, 40]
+        if i >= len(self.grid) or j >= len(self.grid[0]):
+            return False
+        else:
+            return self.grid[i][j] in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 200, 800, 2000, 3000, 4000]
     
     #Función de soporte para pintar el ambiente
     def plot(self):
@@ -141,6 +144,45 @@ class Canvas:
         plt.axis("off")
         plt.show()
 
+
+    def plot_rainbow(self):
+        fig1 = plt.figure(figsize=(20, 20))
+        ax1 = fig1.add_subplot(111, aspect='equal')
+        
+        # Lineas
+        for i in range(0, len(self.grid)+1):
+            ax1.axhline(i , linewidth=2, color="#2D2D33")
+        for i in range(len(self.grid[0])+1):
+            ax1.axvline(i , linewidth=2, color="#2D2D33")
+        
+        # Amarillo - inicio
+        (i,j)  = self.initial_state
+        ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
+        for j in range(len(self.grid[0])):
+            for i in range(len(self.grid)):
+                if self.is_terminal(state=(i, j)): # verde
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
+                elif self.grid[i][j] < 0: # rojo
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#f0837f"))
+                elif self.grid[i][j] >= 0 and self.grid[i][j] < 3: #amarillo
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#eef593"))
+                elif self.grid[i][j] >= 3 and self.grid[i][j] < 5: #verde claro
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cdf7b5"))
+                elif self.grid[i][j] >= 5 and self.grid[i][j] < 10: #verde claro
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#b7f792"))
+                elif self.grid[i][j] >= 10: #verde mas oscuro
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#9cf768"))
+                
+
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[0])):
+                if self.grid[i][j] == None:
+                    ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center', fontsize=6)
+                else:
+                    ax1.text(j+0.5, self.nrows-i-1+0.5, str(round(self.grid[i][j], 1)), ha='center', va='center', fontsize=6)
+        plt.axis("off")
+        plt.show()
+
     
     def print_policy(self, i, j, policy):
         if policy[i][j] == "up":
@@ -152,6 +194,7 @@ class Canvas:
         elif policy[i][j] == "right":
             return ">"
         return ""
+    
 
     def plot_policy(self, policy):
         fig1 = plt.figure(figsize=(20, 20))
