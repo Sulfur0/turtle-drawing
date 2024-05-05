@@ -8,7 +8,7 @@ class Logo:
         self.step_size = step_size
         self._turtle = turtle.Turtle()
         self._screen = turtle.Screen()
-        self._turtle.speed(3)
+        self._turtle.speed(20)
         self._turtle.penup()
         self.go_to(self.env.state)
         self._turtle.left(90)
@@ -86,7 +86,7 @@ class Logo:
             print(f'I am not rewarded in this position {self.logo_coordinates(self.env.state)}!. I won''t draw')
 
     
-    def draw(self, agent, iterations=300):
+    def draw(self, agent, iterations=3000):
 
         state = (0, 0)
         agent.mdp.initial_state = state
