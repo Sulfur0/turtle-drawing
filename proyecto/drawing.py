@@ -2,8 +2,8 @@ from canvas import Canvas
 from policy import PolicyIteration
 from logo import Logo
 
-import logging
-logger = logging.getLogger(__name__)
+from utils import Logger
+logger = Logger().get_logger()
 
 class Drawing:
 
@@ -39,18 +39,22 @@ class Drawing:
         - canvas: El canvas que contiene el MDP que se quiere resolver
         - agent: El agente que contiene la solución al MDP. 
         '''
-        
+
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         agent = PolicyIteration(self.canvas)
         agent.policy_iteration()
+        logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         return self.canvas, agent
     
 
     def draw_policy(self, agent):
-        # Creo la tortuga que que recibe el agente y le pido que empiece
-        # el dibujo
+        '''
+        Este método inicializa la tortuga y le entrega la política en la que se debe basar para dibujar.
+        '''
+        logger.info('La política está lista. Inicializo la tortuga para que empiece su dibujo')
         logo = Logo(canvas=agent.mdp)
         logo.draw(agent)
+        logger.info('Dibujo terminado')
 
 
     def run(self):
