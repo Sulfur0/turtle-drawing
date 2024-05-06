@@ -7,26 +7,19 @@ logger = LoggerManager().getLogger()
 
 class Drawing:
 
-    def __init__(self):
-        self.rows, self.columns = 50, 50
+    def __init__(self, figure_sequence, dimensions):
+        
+        self.figure_sequence = figure_sequence        
+
+        self.rows, self.columns = dimensions
 
         # Inicializo el tablero con todas las recompensas en cero
-        self.rewards_board = [[' ' for _ in range(self.columns)] for _ in range(self.rows)]
-
-        # Defino las recompensas de acuerdo a la figura que queremos dibujar.
-        for i in range(self.rows):
-            for j in range(self.columns):
-                if i == 10 and j >= 10 and j <= 40:
-                    self.rewards_board[i][j] = '+1'
-                if i == 40 and j >= 10 and j <= 40:
-                    self.rewards_board[i][j] = '+1'
-                if j == 40 and i >= 10 and i <= 40:
-                    self.rewards_board[i][j] = '+1'
-                if j == 10 and i >= 10 and i <= 40:
-                    self.rewards_board[i][j] = '+1'
-
-        self.rewards_board[0][0] = 'S'
-        self.canvas = Canvas(self.rewards_board)
+        self.rewards_board = [[' ' for _ in range(self.columns)] for _ in range(self.rows)]   
+        self.starting_point = (0, 0)
+        si, sj = self.starting_point
+        self.rewards_board[si][sj] = 'S'
+        self.canvas = None
+        self.policies = []
 
     
     def train(self):
@@ -56,7 +49,34 @@ class Drawing:
         logo.draw(agent)
         logger.info('Dibujo terminado')
 
+    def create_canvases(self):
+        """
+        crea la lista de canvas para cada iteracion del dibujo
+        se debe crear un canvas por vertice de la figura tomando en cuenta el punto anterior como 
+        inicio del siguiente
+        no se establece la recompensa inicial en la instanciacion de la clase sino en este punto        
+        """
+        print("rewards_board: ",len(self.rewards_board))
+        for iter_num in range(len(self.figure_sequence)):
+            iteration = self.figure_sequence[iter_num]
+            i,j = iteration
+            self.rewards_board[int(i/5)][int(j/5)] = '+1'
+            self.canvas = Canvas(self.rewards_board)
+            canvas, agent = self.train()
+            # En este punto ya se han actualizado las politicas, aqui se debe dibujar hasta el destino.
+            canvas.plot_policy(agent.policy)
+            # establecemos el inicio para la siguiente iteracion
+            si, sj = self.starting_point
+            self.rewards_board[si][sj] = ' '
+            self.starting_point = (int(i/5) , int(j/5))
+            self.rewards_board[int(i/5)][int(j/5)] = 'S'
+            
+            if(iter_num == len(self.figure_sequence)-1):
+                print("terminar")
 
     def run(self):
-        canvas, agent = self.train()
-        self.draw_policy(agent)
+        self.create_canvases()
+        # canvas, agent = self.train()
+        # print(canvas)
+
+        # self.draw_policy(agent)

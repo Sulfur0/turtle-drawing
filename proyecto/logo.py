@@ -110,7 +110,7 @@ class Logo:
         self._turtle.penup()
         logger.info(f'OK, jumping to {logo_target}')
 
-
+    """
     def prepare_pen(self):
         '''
         Este método prepara el lápiz para el movimiento de acuerdo con las recompensas. 
@@ -127,7 +127,55 @@ class Logo:
 
     
 
-    def draw(self, agent, iterations=5000):
+    def draw(self, agent, iterations=15):
+        '''
+        Este método usa la política en el agente para dibujar. El algoritmo de dibujo se basa en iteraciones, 
+        cada iteración da un paso desde el estado actual en la dirección dictada por la política. 
+        En algunos casos hay colisiones y es necesario desobedecer la política y saltar a otro lugar del tablero para 
+        evitar ciclos infinitos. 
+        '''
+
+        state = (0, 0)
+        agent.mdp.initial_state = state
+        agent.mdp.state = state
+        pivot_state = state
+        
+        last_action = None
+        for _ in range(iterations):
+            policy = agent.policy[pivot_state[0]][pivot_state[1]]
+
+            # Una colisión se da cuando la política en el estado de llegada de un movimiento le pide
+            # a la tortuga volver a la posición en la que se encuentra actualmente. Esto es una colisión
+            # porque se crea un ciclo infinito. En este caso, le pedimos a la tortuga que sale a un estado
+            # aleatorio diferente del tablero para abordar el dibujo por otro camino. 
+            if agent.mdp.actions_collide(policy, last_action):
+                pivot_state = (random.randrange(0, self.canvas.nrows), random.randrange(0, self.canvas.ncols))
+                self.go_to(pivot_state)
+                agent.mdp.state = pivot_state
+                logger.info(f'Collision! Jumping to a random state: {pivot_state}')
+                last_action = None
+            
+            # Cuando no hay colisión, entonces la tortuga se mueve en la dirección que dicta la política en
+            # en el estado actual.
+            else:
+                if policy == 'down':
+                    self.down()
+                if policy == 'up':
+                    self.up()
+                if policy == 'left':
+                    self.left()
+                if policy == 'right':
+                    self.right()
+
+                last_action = policy
+                agent.mdp.do_action(policy)
+                pivot_state = agent.mdp.state
+
+    """
+    def prepare_pen(self):
+        self._turtle.pendown()
+
+    def draw(self, agent, iterations=15):
         '''
         Este método usa la política en el agente para dibujar. El algoritmo de dibujo se basa en iteraciones, 
         cada iteración da un paso desde el estado actual en la dirección dictada por la política. 
