@@ -5,12 +5,10 @@ from logo import Logo
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
-class Drawing:
+class DrawingMultiplePolicies:
 
-    def __init__(self, figure_sequence, dimensions):
-        
+    def __init__(self, figure_sequence, dimensions, draw=True):
         self.figure_sequence = figure_sequence        
-
         self.rows, self.columns = dimensions
 
         # Inicializo el tablero con todas las recompensas en cero
@@ -20,6 +18,10 @@ class Drawing:
         self.rewards_board[si][sj] = 'S'
         self.canvas = None
         self.policies = []
+
+        # Inicializo la tortuga. En este caso, el ambiente aún no esta listo.
+        if draw:
+            self.logo = Logo(canvas=None)
 
     
     def train(self):
@@ -40,31 +42,40 @@ class Drawing:
         return self.canvas, agent
     
 
-    def draw_policy(self, agent):
+    def draw_policies(self, solutions):
         '''
-        Este método inicializa la tortuga y le entrega la política en la que se debe basar para dibujar.
+        Este método inicializa la tortuga y le entrega la solución en la que se debe basar para dibujar.
         '''
-        logger.info('La política está lista. Inicializo la tortuga para que empiece su dibujo')
-        logo = Logo(canvas=agent.mdp)
-        logo.draw(agent)
-        logger.info('Dibujo terminado')
+        
+        for solution in solutions:
+            logger.info('La política para el siguiente trazo está lista. Le pido a la tortuga que empiece su dibujo')
+            self.logo.canvas = solution[0]
+            self.logo.draw(solution[1], state=solution[2])
+            logger.info('Trazo terminado.')
+            
+        self.logo.done()
 
-    def create_canvases(self):
+
+    def create_canvases(self, plot=False):
         """
-        crea la lista de canvas para cada iteracion del dibujo
-        se debe crear un canvas por vertice de la figura tomando en cuenta el punto anterior como 
-        inicio del siguiente
-        no se establece la recompensa inicial en la instanciacion de la clase sino en este punto        
+        Crea la lista de canvas para cada iteración del dibujo. Se debe crear un canvas por cada
+        vértice de la figura tomando en cuenta el punto anterior como inicio del siguiente.
+        No se establece la recompensa inicial en la instanciacion de la clase sino en este punto.
+        Se retorna una lista de políticas, una por cada trazo que la tortuga debe dibujar. 
         """
         print("rewards_board: ",len(self.rewards_board))
+        solutions = []
         for iter_num in range(len(self.figure_sequence)):
             iteration = self.figure_sequence[iter_num]
             i,j = iteration
             self.rewards_board[int(i/5)][int(j/5)] = '+1'
             self.canvas = Canvas(self.rewards_board)
             canvas, agent = self.train()
+            solutions += [(canvas, agent, self.starting_point),]
             # En este punto ya se han actualizado las politicas, aqui se debe dibujar hasta el destino.
-            canvas.plot_policy(agent.policy)
+            if plot:
+                canvas.plot_policy(agent.policy)
+
             # establecemos el inicio para la siguiente iteracion
             si, sj = self.starting_point
             self.rewards_board[si][sj] = ' '
@@ -74,9 +85,9 @@ class Drawing:
             if(iter_num == len(self.figure_sequence)-1):
                 print("terminar")
 
-    def run(self):
-        self.create_canvases()
-        # canvas, agent = self.train()
-        # print(canvas)
+        return solutions
 
-        # self.draw_policy(agent)
+
+    def run(self):
+        solutions = self.create_canvases()
+        self.draw_policies(solutions)
