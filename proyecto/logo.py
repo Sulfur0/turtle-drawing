@@ -59,7 +59,8 @@ class Logo:
         self._turtle.right(180)
         self._turtle.forward(self.step_size)
         self._turtle.left(180)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
 
 
     def up(self):
@@ -70,7 +71,8 @@ class Logo:
         '''
         self.prepare_pen()
         self._turtle.forward(self.step_size)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def left(self):
@@ -83,7 +85,8 @@ class Logo:
         self._turtle.left(90)
         self._turtle.forward(self.step_size)
         self._turtle.right(90)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def right(self):
@@ -96,7 +99,8 @@ class Logo:
         self._turtle.right(90)
         self._turtle.forward(self.step_size)
         self._turtle.left(90)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def go_to(self, position, draw=False):
@@ -125,9 +129,6 @@ class Logo:
                 logger.info(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
             else:
                 logger.info(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
-        else:
-            self._turtle.pendown()
-
     
 
     def draw(self, agent, iterations=15, state=(0, 0), collision_strategy='stop', ignore_terminals=True):

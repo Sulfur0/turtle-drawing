@@ -47,12 +47,22 @@ class DrawingMultiplePolicies:
         Este método inicializa la tortuga y le entrega la solución en la que se debe basar para dibujar.
         '''
         
+        iteration = 0
         for solution in solutions:
             logger.info('La política para el siguiente trazo está lista. Le pido a la tortuga que empiece su dibujo')
             self.logo.canvas = solution[0]
+
+            # La primera iteración consiste en buscar el primer vértice de la figura. Como no quiero dibujar esa
+            # búsqueda, entonces levanto el lápiz para esa primera iteración. 
+            if iteration == 0:
+                self.logo._turtle.penup()
+            else:
+                self.logo._turtle.pendown()
+                
             self.logo.draw(solution[1], state=solution[2])
             logger.info('Trazo terminado.')
-            
+            iteration += 1
+
         self.logo.done()
 
 
