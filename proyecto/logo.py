@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore")
 
 class Logo:
 
-    def __init__(self, canvas, step_size=7):
+    def __init__(self, canvas, step_size=7, draw_rewards_only=False):
         self.canvas = canvas
         self.step_size = step_size
         self._turtle = turtle.Turtle()
@@ -18,9 +18,10 @@ class Logo:
         self._turtle.speed(30)
         self._screen.bgcolor("black")
         self._turtle.pencolor("yellow")
-        self.go_to(self.canvas.initial_state)
+        if self.canvas != None:
+            self.go_to(self.canvas.initial_state)
         self._turtle.left(90)
-        self.visited_rewarded_states = []
+        self.draw_rewards_only=draw_rewards_only
 
 
     def logo_coordinates(self, position):
@@ -58,7 +59,8 @@ class Logo:
         self._turtle.right(180)
         self._turtle.forward(self.step_size)
         self._turtle.left(180)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
 
 
     def up(self):
@@ -69,7 +71,8 @@ class Logo:
         '''
         self.prepare_pen()
         self._turtle.forward(self.step_size)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def left(self):
@@ -82,7 +85,8 @@ class Logo:
         self._turtle.left(90)
         self._turtle.forward(self.step_size)
         self._turtle.right(90)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def right(self):
@@ -95,7 +99,8 @@ class Logo:
         self._turtle.right(90)
         self._turtle.forward(self.step_size)
         self._turtle.left(90)
-        self._turtle.penup()
+        if self.draw_rewards_only:
+            self._turtle.penup()
         
 
     def go_to(self, position, draw=False):
@@ -110,7 +115,7 @@ class Logo:
         self._turtle.penup()
         logger.info(f'OK, jumping to {logo_target}')
 
-
+    
     def prepare_pen(self):
         '''
         Este método prepara el lápiz para el movimiento de acuerdo con las recompensas. 
@@ -118,42 +123,63 @@ class Logo:
         para dibujar. De lo contrario, el lápiz se deja levantado para no hacer trazos sobre
         estados que no tienen recompensa porque no son parte del dibujo.
         '''
-        if self.canvas.is_terminal(state=self.canvas.state):
-            self._turtle.pendown()
-            self.visited_rewarded_states += [self.canvas.state,]
-            logger.info(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
-        else:
-            logger.info(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
-
+        if self.draw_rewards_only :
+            if self.canvas.is_terminal(state=self.canvas.state):
+                self._turtle.pendown()
+                logger.info(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
+            else:
+                logger.info(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
     
 
-    def draw(self, agent, iterations=5000):
+    def draw(self, agent, iterations=15, state=(0, 0), collision_strategy='stop', ignore_terminals=True):
         '''
         Este método usa la política en el agente para dibujar. El algoritmo de dibujo se basa en iteraciones, 
         cada iteración da un paso desde el estado actual en la dirección dictada por la política. 
         En algunos casos hay colisiones y es necesario desobedecer la política y saltar a otro lugar del tablero para 
         evitar ciclos infinitos. 
-        '''
 
-        state = (0, 0)
+        Entradas:
+        -----------
+
+        - collision_strategy: Estrategia que se debe seguir en caso de colisiones. Dos opciones son posibles:
+        'stop' que detiene la ejecución saliendo del ciclo de dibujo y del método, y 'jump' que hace que la tortuga
+        salte a un punto aleatorio del tablero. 
+
+        - ignore_terminals: Ignora el movimiento dictado por la política en un estado terminal. Esos movimientos
+        no nos interesan cuando estamos calculando un trazo porque el estado terminal no debe cambiar dado que es el
+        estado inicial de la siguiente iteración.
+        '''
         agent.mdp.initial_state = state
         agent.mdp.state = state
         pivot_state = state
+        logger.info(f'Inicio un trazo en el estado: {state}')
         
         last_action = None
         for _ in range(iterations):
+
+            if ignore_terminals and self.canvas.is_terminal(state=self.canvas.state):
+                return
+
             policy = agent.policy[pivot_state[0]][pivot_state[1]]
+            logger.info(f'La política me dice que debo ir: {policy}')
 
             # Una colisión se da cuando la política en el estado de llegada de un movimiento le pide
             # a la tortuga volver a la posición en la que se encuentra actualmente. Esto es una colisión
-            # porque se crea un ciclo infinito. En este caso, le pedimos a la tortuga que sale a un estado
-            # aleatorio diferente del tablero para abordar el dibujo por otro camino. 
+            # porque se crea un ciclo infinito. 
             if agent.mdp.actions_collide(policy, last_action):
-                pivot_state = (random.randrange(0, self.canvas.nrows), random.randrange(0, self.canvas.ncols))
-                self.go_to(pivot_state)
-                agent.mdp.state = pivot_state
-                logger.info(f'Collision! Jumping to a random state: {pivot_state}')
-                last_action = None
+
+                # En este caso, la estrategia es 'jump', entonces le pedimos a la tortuga que sale a un estado
+                # aleatorio diferente del tablero para abordar el dibujo por otro camino. 
+                if collision_strategy == 'jump':
+                    pivot_state = (random.randrange(0, self.canvas.nrows), random.randrange(0, self.canvas.ncols))
+                    self.go_to(pivot_state)
+                    agent.mdp.state = pivot_state
+                    logger.info(f'Collision! Jumping to a random state: {pivot_state}')
+                    last_action = None
+
+                # En caso, la estrategia es 'stop' y entonces detenemos el dibujo y salimos del método.
+                else:
+                    return
             
             # Cuando no hay colisión, entonces la tortuga se mueve en la dirección que dicta la política en
             # en el estado actual.
@@ -170,3 +196,7 @@ class Logo:
                 last_action = policy
                 agent.mdp.do_action(policy)
                 pivot_state = agent.mdp.state
+                logger.info(f'Mi nuevo estado luego de la acción es: {pivot_state}')
+
+    def done(self):
+        turtle.done()

@@ -5,7 +5,7 @@ from logo import Logo
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
-class Drawing:
+class DrawingSinglePolicy:
 
     def __init__(self):
         self.rows, self.columns = 50, 50
@@ -52,8 +52,8 @@ class Drawing:
         Este método inicializa la tortuga y le entrega la política en la que se debe basar para dibujar.
         '''
         logger.info('La política está lista. Inicializo la tortuga para que empiece su dibujo')
-        logo = Logo(canvas=agent.mdp)
-        logo.draw(agent)
+        logo = Logo(canvas=agent.mdp, draw_rewards_only=True)
+        logo.draw(agent, iterations=3000, collision_strategy='jump', ignore_terminals=False)
         logger.info('Dibujo terminado')
 
 
