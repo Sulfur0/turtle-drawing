@@ -42,12 +42,12 @@ class DrawingSinglePolicy():
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         agent = PolicyIteration(self.canvas)
-        agent.policy_iteration()
+        agent.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         return self.canvas, agent
     
 
-    def draw_policy(self, agent):
+    def draw(self, agent):
         '''
         Este método inicializa la tortuga y le entrega la política en la que se debe basar para dibujar.
         '''
@@ -59,4 +59,4 @@ class DrawingSinglePolicy():
 
     def run(self):
         canvas, agent = self.train()
-        self.draw_policy(agent)
+        self.draw(agent)
