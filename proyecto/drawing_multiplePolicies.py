@@ -32,14 +32,14 @@ class DrawingMultiplePolicies():
         Salidas:
         --------
         - canvas: El canvas que contiene el MDP que se quiere resolver
-        - agent: El agente que contiene la solución al MDP. 
+        - algorithm: El agente que contiene la solución al MDP. 
         '''
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        agent = PolicyIteration(self.canvas)
-        agent.run()
+        algorithm = PolicyIteration(self.canvas)
+        algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        return self.canvas, agent
+        return self.canvas, algorithm
     
 
     def draw(self, solutions):
@@ -80,11 +80,11 @@ class DrawingMultiplePolicies():
             i,j = iteration
             self.rewards_board[int(i/5)][int(j/5)] = '+1'
             self.canvas = Canvas(self.rewards_board)
-            canvas, agent = self.train()
-            solutions += [(canvas, agent, self.starting_point),]
+            canvas, algorithm = self.train()
+            solutions += [(canvas, algorithm, self.starting_point),]
             # En este punto ya se han actualizado las politicas, aqui se debe dibujar hasta el destino.
             if plot:
-                canvas.plot_policy(agent.policy)
+                canvas.plot_policy(algorithm.policy)
 
             # establecemos el inicio para la siguiente iteracion
             si, sj = self.starting_point

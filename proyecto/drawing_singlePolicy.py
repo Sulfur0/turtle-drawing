@@ -1,5 +1,6 @@
 from canvas import Canvas
 from policy_iteration import PolicyIteration
+from value_iteration import ValueIteration
 from logo import Logo
 
 from utils import LoggerManager
@@ -37,26 +38,27 @@ class DrawingSinglePolicy():
         Salidas:
         --------
         - canvas: El canvas que contiene el MDP que se quiere resolver
-        - agent: El agente que contiene la solución al MDP. 
+        - algorithm: El algorithm que soluciona el MDP. 
         '''
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        agent = PolicyIteration(self.canvas)
-        agent.run()
+        #algorithm = PolicyIteration(self.canvas)
+        algorithm = ValueIteration(self.canvas)
+        algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        return self.canvas, agent
+        return self.canvas, algorithm
     
 
-    def draw(self, agent):
+    def draw(self, algorithm):
         '''
         Este método inicializa la tortuga y le entrega la política en la que se debe basar para dibujar.
         '''
         logger.info('La política está lista. Inicializo la tortuga para que empiece su dibujo')
-        logo = Logo(canvas=agent.canvas, draw_rewards_only=True)
-        logo.draw(agent, iterations=3000, collision_strategy='jump', ignore_terminals=False)
+        logo = Logo(canvas=algorithm.canvas, draw_rewards_only=True)
+        logo.draw(algorithm, iterations=3000, collision_strategy='jump', ignore_terminals=False)
         logger.info('Dibujo terminado')
 
 
     def run(self):
-        canvas, agent = self.train()
-        self.draw(agent)
+        canvas, algorithm = self.train()
+        self.draw(algorithm)
