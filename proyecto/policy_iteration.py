@@ -111,6 +111,7 @@ class PolicyIteration(Algorithm):
                         self.canvas.state = state
                     self.policy[i][j] = best_action
 
+
     def policy_iteration(self):
         '''
         Éste método ejecuta el ciclo evaluación/mejora de la política a partir de
