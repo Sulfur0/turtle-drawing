@@ -11,21 +11,16 @@ class PolicyIteration(Algorithm):
         self.canvas = canvas
         self.discount = discount
         self.iterations = iterations
-        self.values = [[self.canvas.values_board[i][j] for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
-        self.policy = [[random.choice(self.canvas.get_possible_actions((i, j))) if self.canvas.values_board[i][j] != None else None for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
-    
-
-    def get_policy(self, state):
-        i, j = state
-        return self.policy[i][j]
+        self.values = None
+        self.policy = None
     
     
-    def get_value(self, state):
+    def memoized_V(self, state):
         i, j = state
         return self.values[i][j]
     
     
-    def compute_new_value_from_values(self, state, action):
+    def V(self, state, action):
         t = 1 # El ruido es 0 dado que el canvas es deterministico. Entonces t = 1 siempre
         reward, state_prime = self.canvas.do_action(action)
 
@@ -34,15 +29,22 @@ class PolicyIteration(Algorithm):
         # y que entonces debe seguir avanzando por el mismo. 
         if self.canvas.is_terminal(state) and self.canvas.is_terminal(state_prime):
             return 2000
-            #t = 20
         
         # En todos los otros casos, aplico la ecuación de Bellman para calcular los valores
         # que van a guiar a la tortuga a la primera casilla del trazo. 
-        return t * (self.canvas.values_board[state[0]][state[1]] + self.discount * self.get_value(state_prime))
+        return t * (self.canvas.values_board[state[0]][state[1]] + self.discount * self.memoized_V(state_prime))
     
 
     
     def policy_evaluation(self):
+        '''
+        Este método evalúa la política actual usando la ecuación de Bellman sobre los
+        valores V calculados hasta el momento. 
+        '''
+
+        # Loop: Tenemos que recorrer todos los estados. En este caso, los estados son
+        #       las celdas de la matriz entonces entramos en un doble ciclo sobre los
+        #       índices i y j. 
         for i in range(self.canvas.nrows):
             for j in range(self.canvas.ncols):
                 state = (i, j)
@@ -51,25 +53,42 @@ class PolicyIteration(Algorithm):
                     if not self.canvas.is_terminal():
                         # Calculo la ecuación de Bellman para cada uno de los estados a los que puedo llegar
                         # con las acciones válidas desde el estado actual. 
-                        action = self.get_policy(state)
-                        self.values[i][j] = self.compute_new_value_from_values(state, action)
+                        action = self.policy[i][j]
+                        self.values[i][j] = self.V(state, action)
                         self.canvas.state = state                        
                         
     
     def policy_iteration(self):
-        # Loop: para cada iteración k
+
+        # Inicializamos los V arbitrariamente. Esta inicialización se decide
+        # en el momento de inicializar las recompensas. Entonces, para la iteración
+        # de políticas, simplemente hacemos una copia de los valores en el canvas.
+        self.values = [[self.canvas.values_board[i][j] for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
+
+        # Inicializamos la primera versión de la política (π) aleatoriamente. Naturalmente, 
+        # no va a ser la política óptima pero será la política que empezaremos a 
+        # optimizar. El objetivo es hallar la política óptima (π*) como resultado de
+        # este algoritmo.
+        self.policy = [[random.choice(self.canvas.get_possible_actions((i, j))) if self.canvas.values_board[i][j] != None else None for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
+
+        # Loop: Iniciamos el ciclo de optimización. En este caso, usamos una cantidad
+        # fija de iteraciones (self.iterations) pero podemos también utilizar un criterio 
+        # de convergencia.
         for iteration in range(self.iterations):
-            # Loop: para cada estado s
+        
+            # El primer paso de cada iteración es evaluar la política actual.
             self.policy_evaluation()
+
+            # Loop: para cada estado s
             for i in range(self.canvas.nrows):
                 for j in range(self.canvas.ncols):
                     state = (i, j)
                     if self.canvas.values_board[i][j] != None:
                         self.canvas.state = state
-                        best_action = self.get_policy(state)
+                        best_action = self.policy[i][j]
                         best_value = self.values[i][j]
                         for action in self.canvas.get_possible_actions(state):
-                            new_value = self.compute_new_value_from_values(state, action)
+                            new_value = self.V(state, action)
                             self.canvas.do_action(action)
                             if new_value > best_value:
                                 best_value = new_value
@@ -78,7 +97,6 @@ class PolicyIteration(Algorithm):
                                 best_action = action
                             self.canvas.state = state
                         self.policy[i][j] = best_action
-
 
         self.canvas.values_board = [[self.values[i][j] for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
 
