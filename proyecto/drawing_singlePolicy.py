@@ -1,5 +1,5 @@
 from canvas import Canvas
-from policy import PolicyIteration
+from policy_iteration import PolicyIteration
 from logo import Logo
 
 from utils import LoggerManager
