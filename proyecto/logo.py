@@ -10,17 +10,21 @@ warnings.filterwarnings("ignore")
 class Logo:
 
     def __init__(self, canvas, step_size=7, draw_rewards_only=False):
-        self.canvas = canvas
-        self.step_size = step_size
+
+        # Configuración de la tortuga y de la pantalla
         self._turtle = turtle.Turtle()
         self._turtle.penup()
-        self._screen = turtle.Screen()
         self._turtle.speed(30)
-        self._screen.bgcolor("black")
+        self._turtle.left(90)
         self._turtle.pencolor("yellow")
+        self._screen = turtle.Screen()
+        self._screen.bgcolor("black")
+
+        # Inicialización del estado inicial del agente.
+        self.canvas = canvas
+        self.step_size = step_size
         if self.canvas != None:
             self.go_to(self.canvas.initial_state)
-        self._turtle.left(90)
         self.draw_rewards_only=draw_rewards_only
 
 
@@ -149,8 +153,8 @@ class Logo:
         no nos interesan cuando estamos calculando un trazo porque el estado terminal no debe cambiar dado que es el
         estado inicial de la siguiente iteración.
         '''
-        agent.mdp.initial_state = state
-        agent.mdp.state = state
+        agent.canvas.initial_state = state
+        agent.canvas.state = state
         pivot_state = state
         logger.info(f'Inicio un trazo en el estado: {state}')
         
@@ -166,14 +170,14 @@ class Logo:
             # Una colisión se da cuando la política en el estado de llegada de un movimiento le pide
             # a la tortuga volver a la posición en la que se encuentra actualmente. Esto es una colisión
             # porque se crea un ciclo infinito. 
-            if agent.mdp.actions_collide(policy, last_action):
+            if agent.canvas.actions_collide(policy, last_action):
 
                 # En este caso, la estrategia es 'jump', entonces le pedimos a la tortuga que sale a un estado
                 # aleatorio diferente del tablero para abordar el dibujo por otro camino. 
                 if collision_strategy == 'jump':
                     pivot_state = (random.randrange(0, self.canvas.nrows), random.randrange(0, self.canvas.ncols))
                     self.go_to(pivot_state)
-                    agent.mdp.state = pivot_state
+                    agent.canvas.state = pivot_state
                     logger.info(f'Collision! Jumping to a random state: {pivot_state}')
                     last_action = None
 
@@ -194,9 +198,10 @@ class Logo:
                     self.right()
 
                 last_action = policy
-                agent.mdp.do_action(policy)
-                pivot_state = agent.mdp.state
+                agent.canvas.do_action(policy)
+                pivot_state = agent.canvas.state
                 logger.info(f'Mi nuevo estado luego de la acción es: {pivot_state}')
+
 
     def done(self):
         turtle.done()

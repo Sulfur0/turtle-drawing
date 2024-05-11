@@ -5,7 +5,7 @@ from logo import Logo
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
-class DrawingMultiplePolicies:
+class DrawingMultiplePolicies():
 
     def __init__(self, figure_sequence, dimensions, draw=True):
         self.figure_sequence = figure_sequence        
