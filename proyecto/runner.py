@@ -19,7 +19,7 @@ class Colors:
 
 print()
 print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
-print(Colors.BOLD + "Bienvenid@ a Boosted Logo!" + Colors.CLOSE)
+print(Colors.BOLD + "Bienvenid@ a Reinforced Logo!" + Colors.CLOSE)
 print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
 print()
 print("Para empezar, debe configurar el agente. Responda a las siguientes preguntas:" + Colors.CLOSE)
@@ -40,6 +40,8 @@ if algoritmo == 'v':
     algorithm_kind = Algorithm.VALUE_ITERATION
 elif algoritmo == 'p':
     algorithm_kind = Algorithm.POLICY_ITERATION
+elif algoritmo == 'mc':
+    algorithm_kind = Algorithm.MONTE_CARLO
 
 # Identificando la estrategia de dibujo que se debe usar. Posibles opciones: single policy y multiple policy
 

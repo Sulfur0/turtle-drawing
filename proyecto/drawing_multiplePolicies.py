@@ -5,6 +5,7 @@ from algorithm import Algorithm
 from drawing_strategy import DrawingStrategy
 from algorithm_policy_iteration import PolicyIteration
 from algorithm_value_iteration import ValueIteration
+from algorithm_monte_carlo import MonteCarlo
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
@@ -27,7 +28,7 @@ class DrawingMultiplePolicies(DrawingStrategy):
             self.logo = Logo(canvas=None)
     
 
-    def train(self, canvas):
+    def train(self, canvas, episodes=10):
         '''
         Este método entrena el agente. Es decir, resuelve el MDP a partir del método
         de iteración de políticas a partir de las recompensas que se tienen en el canvas.
@@ -37,10 +38,14 @@ class DrawingMultiplePolicies(DrawingStrategy):
         '''
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
+        
         if self.algorithm_kind == Algorithm.VALUE_ITERATION:
             algorithm = ValueIteration(canvas)
         if self.algorithm_kind == Algorithm.POLICY_ITERATION:
             algorithm = PolicyIteration(canvas)
+        if self.algorithm_kind == Algorithm.MONTE_CARLO:
+            algorithm = MonteCarlo(canvas, episodes=episodes)
+        
         algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         return algorithm
