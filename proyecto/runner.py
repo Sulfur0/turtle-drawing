@@ -13,18 +13,25 @@ class Colors:
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    CLOSE = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
 print()
-print(Colors.BOLD + "Bienvenid@ a Boosted Logo!" + Colors.ENDC)
-print("Para empezar, debe configurar el agente. Responda a las siguientes preguntas:" + Colors.ENDC)
+print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
+print(Colors.BOLD + "Bienvenid@ a Boosted Logo!" + Colors.CLOSE)
+print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
+print()
+print("Para empezar, debe configurar el agente. Responda a las siguientes preguntas:" + Colors.CLOSE)
 print()
 
 # Identificando el algoritmo que se debe ejecutar. Posibles opciones: value iteration, policy iteration, ...
 
-print(Colors.OKBLUE + "(1) ¿Cuál algoritmo debo usara para encontrar la política óptima? (v) para 'value iteration, (p) para 'policy iteration''" + Colors.ENDC)
+print(Colors.OKBLUE + "(1) ¿Cuál algoritmo debo usara para encontrar la política óptima?" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 'v'  para Value Iteration" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 'p'  para Policy Iteration" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 'mc' para Monte Carlo" + Colors.CLOSE)
+
 algoritmo = input()
 print()
 
@@ -34,13 +41,14 @@ if algoritmo == 'v':
 elif algoritmo == 'p':
     algorithm_kind = Algorithm.POLICY_ITERATION
 
-
 # Identificando la estrategia de dibujo que se debe usar. Posibles opciones: single policy y multiple policy
 
-print(Colors.OKBLUE + "(2) ¿Cuál estrategia de dibujo debo ejecutar? (s) para 'single policy', (m) para 'miltiple policy''" + Colors.ENDC)
+print(Colors.OKBLUE + "(2) ¿Cuál estrategia de dibujo debo ejecutar?" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 's' para Single Policy" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 'm' para Multiple Policy" + Colors.CLOSE)
+
 estrategia = input()
 print()
-
 
 # Ejecutando el algoritmo seleccionado de acuerdo con la estrategia de dibujo seleccionada. 
 
