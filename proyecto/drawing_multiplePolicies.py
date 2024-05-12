@@ -16,7 +16,6 @@ class DrawingMultiplePolicies():
         self.starting_point = (0, 0)
         si, sj = self.starting_point
         self.rewards_board[si][sj] = 'S'
-        self.canvas = None
         self.policies = []
 
         # Inicializo la tortuga. En este caso, el ambiente aún no esta listo.
@@ -24,7 +23,7 @@ class DrawingMultiplePolicies():
             self.logo = Logo(canvas=None)
 
     
-    def train(self):
+    def train(self, canvas):
         '''
         Este método entrena el agente. Es decir, resuelve el MDP a partir del método
         de iteración de políticas a partir de las recompensas que se tienen en el canvas.
@@ -32,14 +31,13 @@ class DrawingMultiplePolicies():
         Salidas:
         --------
         - canvas: El canvas que contiene el MDP que se quiere resolver
-        - algorithm: El agente que contiene la solución al MDP. 
         '''
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        algorithm = PolicyIteration(self.canvas)
+        algorithm = PolicyIteration(canvas)
         algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        return self.canvas, algorithm
+        return canvas, algorithm
     
 
     def draw(self, solutions):
@@ -79,7 +77,7 @@ class DrawingMultiplePolicies():
             iteration = self.figure_sequence[iter_num]
             i,j = iteration
             self.rewards_board[int(i/5)][int(j/5)] = '+1'
-            self.canvas = Canvas(self.rewards_board)
+            canvas = Canvas(self.rewards_board)
             canvas, algorithm = self.train()
             solutions += [(canvas, algorithm, self.starting_point),]
             # En este punto ya se han actualizado las politicas, aqui se debe dibujar hasta el destino.
