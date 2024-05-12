@@ -19,7 +19,7 @@ class Colors:
 
 print()
 print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
-print(Colors.BOLD + "Bienvenid@ a Reinforced Logo!" + Colors.CLOSE)
+print(Colors.BOLD + "¡Bienvenid@ a Reinforced Logo!" + Colors.CLOSE)
 print(Colors.BOLD + "————————————————————————————————————————————————————————————————————————————————————————————" + Colors.CLOSE)
 print()
 print("Para empezar, debe configurar el agente. Responda a las siguientes preguntas:" + Colors.CLOSE)
@@ -46,18 +46,23 @@ elif algoritmo == 'mc':
 # Identificando la estrategia de dibujo que se debe usar. Posibles opciones: single policy y multiple policy
 
 print(Colors.OKBLUE + "(2) ¿Cuál estrategia de dibujo debo ejecutar?" + Colors.CLOSE)
-print(Colors.OKBLUE + "    — 's' para Single Policy" + Colors.CLOSE)
 print(Colors.OKBLUE + "    — 'm' para Multiple Policy" + Colors.CLOSE)
+print(Colors.OKBLUE + "    — 's' para Single Policy" + Colors.CLOSE)
 
-estrategia = input()
-print()
+estrategia = None
+
+# El método de Monte Carlo no soporta la estrategia de política única.
+if algorithm_kind == Algorithm.MONTE_CARLO:
+    estrategia = 'm'
+else:
+    estrategia = input()
+    print()
+
 
 # Ejecutando el algoritmo seleccionado de acuerdo con la estrategia de dibujo seleccionada. 
-
 if estrategia == 's':
     logger.info('Ejecutando la versión de política simple')
     DrawingSinglePolicy(algorithm_kind=algorithm_kind).run()
-
 else:
     logger.info('Ejecutando la versión de múltiples políticas')
     figure_sequence, dimensions = determine_figure("square 10x10 centered")

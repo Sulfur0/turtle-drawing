@@ -162,7 +162,6 @@ class Logo:
                 return
 
             policy = agent.policy[pivot_state[0]][pivot_state[1]]
-            logger.info(f'La política me dice que debo ir: {policy}')
 
             # Una colisión se da cuando la política en el estado de llegada de un movimiento le pide
             # a la tortuga volver a la posición en la que se encuentra actualmente. Esto es una colisión
@@ -197,7 +196,6 @@ class Logo:
                 last_action = policy
                 agent.canvas.do_action(policy)
                 pivot_state = agent.canvas.state
-                logger.info(f'Mi nuevo estado luego de la acción es: {pivot_state}')
 
 
     def done(self):
