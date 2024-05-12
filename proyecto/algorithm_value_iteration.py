@@ -46,7 +46,9 @@ class ValueIteration(AlgorithmImpl):
 
 
     def value_iteration(self):
-
+        '''
+        Éste método ejecuta el algoritmo de iteración de valores para calcular la política óptima del MDP. 
+        '''
         # Inicializamos los q valores arbitrariamente. Esta inicialización se decide
         # en el momento de inicializar las recompensas. Entonces, para la iteración
         # de políticas, simplemente hacemos una copia de los valores en el canvas.
@@ -56,7 +58,7 @@ class ValueIteration(AlgorithmImpl):
         # La política se construye durante el algoritmo de iteración de valores. 
         self.policy = [[None for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
 
-        # Loop: para cada iteración k
+        # Loop: Iteramos hasta la convergencia.
         for _ in range(self.iterations):
             
             # Loop: Tenemos que recorrer todos los estados. En este caso, los estados son
@@ -89,13 +91,17 @@ class ValueIteration(AlgorithmImpl):
                                     self.q_values[i][j] = new_value
                                 best_action = action
                             self.canvas.state = state
+
+                        # En este caso, construimos la política progresivamente al mismo tiempo que vamos
+                        # calculando los q-valores. Una vez llegamos a la convergencia de los q-valores
+                        # es decir, los q-valores no cambian de una iteración a otra, entonces sabemos
+                        # que tenemos la política óptima.
                         self.policy[i][j] = best_action
     
 
     def run(self):
         '''
-        Ejectuta el algoritmo. En este caso, lanza el algoritmo de 'policy_iteration'
-        que encuentra la mejor política.
+        Ejectuta el algoritmo. En este caso, lanza el algoritmo de 'value_iteration' que encuentra la mejor política.
         '''
         logger.info('Ejecutando VALUE_ITERATION para resolver el MDP')
         self.value_iteration()

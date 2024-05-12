@@ -2,8 +2,8 @@ from logo import Logo
 from canvas import Canvas
 from algorithm import Algorithm
 
-from policy_iteration import PolicyIteration
-from value_iteration import ValueIteration
+from algorithm_policy_iteration import PolicyIteration
+from algorithm_value_iteration import ValueIteration
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
