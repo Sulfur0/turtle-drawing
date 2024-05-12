@@ -47,8 +47,13 @@ class PolicyIteration(AlgorithmImpl):
         '''
         Éste método busca mejorar la política actual usando como insumo los q valores
         actuales.
-        '''
 
+        Salidas:
+        ------------
+        - policy_stable: True si no hay mejora con respecto a la última iteración. False de lo contrario.
+
+        '''
+        policy_stable = True
         # Loop: Tenemos que recorrer todos los estados. En este caso, los estados son
         #       las celdas de la matriz entonces entramos en un doble ciclo sobre los
         #       índices i y j. 
@@ -77,16 +82,27 @@ class PolicyIteration(AlgorithmImpl):
                             # porque su valor inicial es la recompensa que guía el algoritmo.
                             if not self.canvas.is_terminal(state=(i, j)):
                                 self.q_values[i][j] = new_value
-                            best_action = action
+
+                            if best_action != action:
+                                best_action = action
+                                policy_stable = False
+
                         self.canvas.state = state
                     self.policy[i][j] = best_action
+        
+        return policy_stable
 
 
     def policy_iteration(self):
         '''
         Éste método ejecuta el ciclo evaluación/mejora de la política a partir de
         un criterio de convergencia.
+
+        Salidas:
+        ------------
+        - required_iterations: Cantidad de iteraciones requeridas para lograr convergencia en la política.
         '''
+        required_iterations = 0
 
         # Inicializamos los q valores arbitrariamente. Esta inicialización se decide
         # en el momento de inicializar las recompensas. Entonces, para la iteración
@@ -103,17 +119,23 @@ class PolicyIteration(AlgorithmImpl):
         # fija de iteraciones (self.iterations) pero podemos también utilizar un criterio 
         # de convergencia.
         for _ in range(self.iterations):
+            required_iterations += 1
         
             # El primer paso de cada iteración es evaluar la política actual.
             self.policy_evaluation()
 
             # Una vez la política actual ha sido evaluada, entonces tratamos de mejorarla.
-            self.policy_improvement()
+            convergence = self.policy_improvement()
+            logger.info(f'Convergencia: {convergence} luego de {required_iterations} iteraciones')
+
+            if convergence : break
 
         # Una vez terminado el ciclo evaluación/mejora, podemos actualizar el canvas
         # con los valores encontrados durante el algoritmo. Esto se hace simplemente
         # para poder visualizar los valores en el canvas.
         self.canvas.values_board = [[self.q_values[i][j] for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
+    
+        return required_iterations
 
 
     def run(self):
@@ -122,4 +144,5 @@ class PolicyIteration(AlgorithmImpl):
         que encuentra la mejor política.
         '''
         logger.info('Ejecutando POLICY_ITERATION para resolver el MDP')
-        self.policy_iteration()
+        required_iterations = self.policy_iteration()
+        logger.info(f'La ejecución de POLICY_ITERATION acaba de terminar. {required_iterations} fueron necesarias para alcanzar convergencia')

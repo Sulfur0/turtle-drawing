@@ -2,13 +2,14 @@ from logo import Logo
 from canvas import Canvas
 from algorithm import Algorithm
 
+from drawing_strategy import DrawingStrategy
 from algorithm_policy_iteration import PolicyIteration
 from algorithm_value_iteration import ValueIteration
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
-class DrawingSinglePolicy():
+class DrawingSinglePolicy(DrawingStrategy):
 
     def __init__(self, algorithm_kind=Algorithm.POLICY_ITERATION):
         self.rows, self.columns = 50, 50
