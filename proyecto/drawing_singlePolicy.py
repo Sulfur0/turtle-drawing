@@ -3,8 +3,6 @@ from canvas import Canvas
 from algorithm import Algorithm
 
 from drawing_strategy import DrawingStrategy
-from algorithm_policy_iteration import PolicyIteration
-from algorithm_value_iteration import ValueIteration
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
@@ -31,28 +29,6 @@ class DrawingSinglePolicy(DrawingStrategy):
 
         self.rewards_board[0][0] = 'S'
         self.algorithm_kind = algorithm_kind
-        
-
-    
-    def train(self, canvas):
-        '''
-        Este método entrena el agente. Es decir, resuelve el MDP a partir del método
-        de iteración de políticas a partir de las recompensas que se tienen en el canvas.
-
-        Salidas:
-        --------
-        - canvas: El canvas que contiene el MDP que se quiere resolver
-        - algorithm: El algorithm que soluciona el MDP. 
-        '''
-
-        logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        if self.algorithm_kind == Algorithm.VALUE_ITERATION:
-            algorithm = ValueIteration(canvas)
-        if self.algorithm_kind == Algorithm.POLICY_ITERATION:
-            algorithm = PolicyIteration(canvas)
-        algorithm.run()
-        logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        return algorithm
     
 
     def draw(self, algorithm):
