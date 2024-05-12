@@ -1,19 +1,22 @@
-from algorithm import Algorithm
+from algorithm import *
 
 import random
 import warnings
 warnings.filterwarnings("ignore")
 
-class PolicyIteration(Algorithm):
+from utils import LoggerManager
+logger = LoggerManager().getLogger()
+
+class PolicyIteration(AlgorithmImpl):
     
     def __init__(self, canvas, discount=0.9, iterations=500):
-        Algorithm.__init__(self)
-        self.canvas = canvas
+        AlgorithmImpl.__init__(self)
         self.discount = discount
         self.iterations = iterations
         self.q_values = None
         self.policy = None
-    
+        self.canvas = canvas
+
     
     def memoized_V(self, state):
         '''
@@ -151,4 +154,5 @@ class PolicyIteration(Algorithm):
         Ejectuta el algoritmo. En este caso, lanza el algoritmo de 'policy_iteration'
         que encuentra la mejor política.
         '''
+        logger.info('Ejecutando POLICY_ITERATION para resolver el MDP')
         self.policy_iteration()

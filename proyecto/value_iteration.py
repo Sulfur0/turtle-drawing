@@ -1,12 +1,15 @@
-from algorithm import Algorithm
+from algorithm import *
 
 import warnings
 warnings.filterwarnings("ignore")
 
-class ValueIteration(Algorithm):
+from utils import LoggerManager
+logger = LoggerManager().getLogger()
+
+class ValueIteration(AlgorithmImpl):
     
     def __init__(self, canvas, discount=0.9, iterations=500):
-        Algorithm.__init__(self)
+        AlgorithmImpl.__init__(self)
         self.canvas = canvas
         self.discount = discount
         self.iterations = iterations
@@ -94,4 +97,5 @@ class ValueIteration(Algorithm):
         Ejectuta el algoritmo. En este caso, lanza el algoritmo de 'policy_iteration'
         que encuentra la mejor política.
         '''
+        logger.info('Ejecutando VALUE_ITERATION para resolver el MDP')
         self.value_iteration()

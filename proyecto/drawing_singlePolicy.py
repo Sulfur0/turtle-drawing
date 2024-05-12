@@ -1,14 +1,16 @@
+from logo import Logo
 from canvas import Canvas
+from algorithm import Algorithm
+
 from policy_iteration import PolicyIteration
 from value_iteration import ValueIteration
-from logo import Logo
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
 class DrawingSinglePolicy():
 
-    def __init__(self):
+    def __init__(self, algorithm_kind=Algorithm.POLICY_ITERATION):
         self.rows, self.columns = 50, 50
 
         # Inicializo el tablero con todas las recompensas en cero
@@ -27,10 +29,11 @@ class DrawingSinglePolicy():
                     self.rewards_board[i][j] = '+1'
 
         self.rewards_board[0][0] = 'S'
-        self.canvas = Canvas(self.rewards_board)
+        self.algorithm_kind = algorithm_kind
+        
 
     
-    def train(self):
+    def train(self, canvas):
         '''
         Este método entrena el agente. Es decir, resuelve el MDP a partir del método
         de iteración de políticas a partir de las recompensas que se tienen en el canvas.
@@ -42,11 +45,13 @@ class DrawingSinglePolicy():
         '''
 
         logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        #algorithm = PolicyIteration(self.canvas)
-        algorithm = ValueIteration(self.canvas)
+        if self.algorithm_kind == Algorithm.VALUE_ITERATION:
+            algorithm = ValueIteration(canvas)
+        if self.algorithm_kind == Algorithm.POLICY_ITERATION:
+            algorithm = PolicyIteration(canvas)
         algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
-        return self.canvas, algorithm
+        return algorithm
     
 
     def draw(self, algorithm):
@@ -60,5 +65,6 @@ class DrawingSinglePolicy():
 
 
     def run(self):
-        canvas, algorithm = self.train()
+        canvas = Canvas(self.rewards_board)
+        algorithm = self.train(canvas)
         self.draw(algorithm)
