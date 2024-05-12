@@ -27,10 +27,10 @@ class ValueIteration(AlgorithmImpl):
         self.policy = [[None for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
 
         # Loop: Iteramos hasta la convergencia.
-        delta = 0
         for _ in range(self.iterations):
+            values_stable = True
             required_iterations += 1
-        
+            
             # Loop: Tenemos que recorrer todos los estados. En este caso, los estados son
             #       las celdas de la matriz entonces entramos en un doble ciclo sobre los
             #       índices i y j. 
@@ -50,16 +50,17 @@ class ValueIteration(AlgorithmImpl):
                         best_action = self.policy[i][j]
                         best_value = self.q_values[i][j]
                         for action in self.canvas.get_possible_actions(state):
-                            self.canvas.do_action(action)
                             new_value = self.V(state, action)
+                            self.canvas.do_action(action)
                             if new_value > best_value:
-                                delta = max(delta, abs(best_value - new_value))
                                 best_value = new_value
 
                                 # No queremos modificar los q_valores sobre los estados terminales
                                 # porque su valor inicial es la recompensa que guía el algoritmo.
                                 if not self.canvas.is_terminal(state=(i, j)):
                                     self.q_values[i][j] = new_value
+                                    values_stable = False
+
                                 best_action = action
                             self.canvas.state = state
 
@@ -68,8 +69,14 @@ class ValueIteration(AlgorithmImpl):
                         # es decir, los q-valores no cambian de una iteración a otra, entonces sabemos
                         # que tenemos la política óptima.
                         self.policy[i][j] = best_action
+
+            if values_stable : break
+
+        # Una vez terminado el ciclo evaluación/mejora, podemos actualizar el canvas
+        # con los valores encontrados durante el algoritmo. Esto se hace simplemente
+        # para poder visualizar los valores en el canvas.
+        self.canvas.values_board = [[self.q_values[i][j] for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
     
-        logger.info(f'delta: {delta}')
         return required_iterations
     
 
@@ -78,4 +85,5 @@ class ValueIteration(AlgorithmImpl):
         Ejectuta el algoritmo. En este caso, lanza el algoritmo de 'value_iteration' que encuentra la mejor política.
         '''
         logger.info('Ejecutando VALUE_ITERATION para resolver el MDP')
-        self.value_iteration()
+        required_iterations = self.value_iteration()
+        logger.info(f'La ejecución de VALUE_ITERATION acaba de terminar. {required_iterations} fueron necesarias para alcanzar convergencia')

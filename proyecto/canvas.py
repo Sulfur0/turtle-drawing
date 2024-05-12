@@ -118,7 +118,7 @@ class Canvas:
 
 
     def plot_rainbow(self):
-        fig1 = plt.figure(figsize=(20, 20))
+        fig1 = plt.figure(figsize=(10, 10))
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
