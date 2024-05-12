@@ -1,9 +1,10 @@
 class AlgorithmImpl:
 
-    def __init__(self, canvas, discount=0.9, iterations=500):
+    def __init__(self, canvas, discount=0.9, iterations=500, plot_policies=False):
         self.canvas = canvas
         self.discount = discount
         self.iterations = iterations
+        self.plot_policies
         self.q_values = None
         self.policy = None
 

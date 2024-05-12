@@ -27,6 +27,25 @@ class DrawingMultiplePolicies(DrawingStrategy):
             self.logo = Logo(canvas=None)
     
 
+    def train(self, canvas):
+        '''
+        Este método entrena el agente. Es decir, resuelve el MDP a partir del método
+        de iteración de políticas a partir de las recompensas que se tienen en el canvas.
+        Entradas:
+        --------
+        - canvas: El canvas que contiene el MDP que se quiere resolver.
+        '''
+
+        logger.info('Inicio del entrenamiento. Calculando la política óptima a partir de las recompensas...')
+        if self.algorithm_kind == Algorithm.VALUE_ITERATION:
+            algorithm = ValueIteration(canvas)
+        if self.algorithm_kind == Algorithm.POLICY_ITERATION:
+            algorithm = PolicyIteration(canvas)
+        algorithm.run()
+        logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
+        return algorithm
+
+
     def draw(self, solutions):
         '''
         Este método inicializa la tortuga y le entrega la solución en la que se debe basar para dibujar.
