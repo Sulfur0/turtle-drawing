@@ -9,8 +9,8 @@ logger = LoggerManager().getLogger()
 
 class PolicyIteration(AlgorithmImpl):
     
-    def __init__(self, canvas, discount=0.9, iterations=500):
-        AlgorithmImpl.__init__(self, canvas, discount, iterations)
+    def __init__(self, canvas, discount=0.9, iterations=20, plot_policies=False):
+        AlgorithmImpl.__init__(self, canvas, discount, iterations, plot_policies)
 
     
     def policy_evaluation(self):
@@ -40,7 +40,10 @@ class PolicyIteration(AlgorithmImpl):
                         # con las acciones válidas desde el estado actual. 
                         action = self.policy[i][j]
                         self.q_values[i][j] = self.V(state, action)
-                        self.canvas.state = state                   
+                        self.canvas.state = state     
+
+        if self.plot_policies:
+            self.canvas.plot_policy(self.policy)              
                         
     
     def policy_improvement(self):
@@ -83,12 +86,13 @@ class PolicyIteration(AlgorithmImpl):
                             if not self.canvas.is_terminal(state=(i, j)):
                                 self.q_values[i][j] = new_value
 
-                            if best_action != action:
-                                best_action = action
-                                policy_stable = False
+                            best_action = action
 
                         self.canvas.state = state
-                    self.policy[i][j] = best_action
+                    
+                    if self.policy[i][j] != best_action:
+                        policy_stable = False
+                        self.policy[i][j] = best_action
         
         return policy_stable
 
@@ -126,7 +130,6 @@ class PolicyIteration(AlgorithmImpl):
 
             # Una vez la política actual ha sido evaluada, entonces tratamos de mejorarla.
             convergence = self.policy_improvement()
-            logger.info(f'Convergencia: {convergence} luego de {required_iterations} iteraciones')
 
             if convergence : break
 

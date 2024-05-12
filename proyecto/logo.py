@@ -130,9 +130,6 @@ class Logo:
         if self.draw_rewards_only :
             if self.canvas.is_terminal(state=self.canvas.state):
                 self._turtle.pendown()
-                logger.info(f'I am rewarded in this position {self.logo_coordinates(self.canvas.state)}!. Drawing')
-            else:
-                logger.info(f'I am not rewarded in this position {self.logo_coordinates(self.canvas.state)}!. I won''t draw')
     
 
     def draw(self, agent, iterations=15, state=(0, 0), collision_strategy='stop', ignore_terminals=True):
