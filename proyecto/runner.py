@@ -43,11 +43,7 @@ elif algoritmo == 'p':
 elif algoritmo == 'mc':
     algorithm_kind = Algorithm.MONTE_CARLO
 
-# Identificando la estrategia de dibujo que se debe usar. Posibles opciones: single policy y multiple policy
-
-print(Colors.OKBLUE + "(2) ¿Cuál estrategia de dibujo debo ejecutar?" + Colors.CLOSE)
-print(Colors.OKBLUE + "    — 'm' para Multiple Policy" + Colors.CLOSE)
-print(Colors.OKBLUE + "    — 's' para Single Policy" + Colors.CLOSE)
+# Identificando la estrategia de dibujo que se debe usar. Posibles opciones: 'single policy' y 'multiple policy'.
 
 estrategia = None
 
@@ -55,6 +51,9 @@ estrategia = None
 if algorithm_kind == Algorithm.MONTE_CARLO:
     estrategia = 'm'
 else:
+    print(Colors.OKBLUE + "(2) ¿Cuál estrategia de dibujo debo ejecutar?" + Colors.CLOSE)
+    print(Colors.OKBLUE + "    — 'm' para Multiple Policy" + Colors.CLOSE)
+    print(Colors.OKBLUE + "    — 's' para Single Policy" + Colors.CLOSE)
     estrategia = input()
     print()
 
@@ -65,7 +64,7 @@ if estrategia == 's':
     DrawingSinglePolicy(algorithm_kind=algorithm_kind).run()
 else:
     logger.info('Ejecutando la versión de múltiples políticas')
-    figure_sequence, dimensions = determine_figure("square 10x10 centered")
+    figure_sequence, dimensions = determine_figure("square 20x20 centered")
     DrawingMultiplePolicies(figure_sequence, dimensions, algorithm_kind=algorithm_kind).run()
 
 

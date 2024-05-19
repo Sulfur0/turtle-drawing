@@ -15,8 +15,10 @@ class ValueIteration(AlgorithmImpl):
     def value_iteration(self):
         '''
         Éste método ejecuta el algoritmo de iteración de valores para calcular la política óptima del MDP. 
+        En este caso, el MDP se compone del canvas y la tortuga.
         '''
         required_iterations = 0
+
         # Inicializamos los q valores arbitrariamente. Esta inicialización se decide
         # en el momento de inicializar las recompensas. Entonces, para la iteración
         # de políticas, simplemente hacemos una copia de los valores en el canvas.
@@ -26,7 +28,12 @@ class ValueIteration(AlgorithmImpl):
         # La política se construye durante el algoritmo de iteración de valores. 
         self.policy = [[None for j in range(self.canvas.ncols)] for i in range(self.canvas.nrows)]
 
-        # Loop: Iteramos hasta la convergencia.
+        # Loop: Iteramos hasta la convergencia. En este caso, la convergencia se define
+        #       en términos de la estabilidad de los q-valores de una iteración a otra. Si para
+        #       una iteración i, los q-valores no cambian con respecto a la iteración i - 1, entonces
+        #       decimos que los q-valores son estables y que se alcanzó la convergencia. 
+        #       Para evitar ciclos infinitos en caso de no llegar a la convergencia, entonces se
+        #       define un número máximo de iteraciones (self.iterations). 
         for _ in range(self.iterations):
             values_stable = True
             required_iterations += 1
