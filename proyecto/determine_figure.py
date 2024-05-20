@@ -1,5 +1,8 @@
 import re
 
+from utils import LoggerManager
+logger = LoggerManager().getLogger()
+
 def determine_figure(description):
     # parámetro que deberá ser pasado a esta función luego de inicializar la ventana de turtle
     window_size = (30, 30)
@@ -24,6 +27,7 @@ def determine_figure(description):
                 figure = match.group(1)
             elif key == "dimensions":
                 dimensions = [int(num) for num in match.groups() if num]
+                logger.info(f'Dimensions: {dimensions}')
             elif key == "position":
                 # print("encontrada posicion", match.group(0))
                 if(match.group(0) == "centered" and (figure == "square" or figure == "rectangle")):

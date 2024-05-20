@@ -118,7 +118,7 @@ class Canvas:
 
 
     def plot_rainbow(self):
-        fig1 = plt.figure(figsize=(10, 10))
+        fig1 = plt.figure(figsize=(15, 15))
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
@@ -169,7 +169,7 @@ class Canvas:
     
 
     def plot_policy(self, policy):
-        fig1 = plt.figure(figsize=(10, 10))
+        fig1 = plt.figure(figsize=(15, 15))
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
@@ -193,8 +193,8 @@ class Canvas:
         for i in range(len(self.values_board)):
             for j in range(len(self.values_board[0])):
                 if self.values_board[i][j] == None:
-                    ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center')
+                    ax1.text(self.ncols-j-1, self.nrows-i-1, "", ha='center', va='center', fontsize=6)
                 else:
-                    ax1.text(j+0.5, self.nrows-i-1+0.5, self.print_policy(i,j, policy), ha='center', va='center')
+                    ax1.text(j+0.5, self.nrows-i-1+0.5, self.print_policy(i,j, policy), ha='center', va='center', fontsize=6)
         plt.axis("off")
         plt.show()

@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore")
 
 class Logo:
 
-    def __init__(self, canvas, step_size=20, draw_rewards_only=False):
+    def __init__(self, canvas, step_size=5, draw_rewards_only=False):
 
         # Configuración de la tortuga y de la pantalla
         self._turtle = turtle.Turtle()

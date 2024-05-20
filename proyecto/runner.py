@@ -64,7 +64,8 @@ if estrategia == 's':
     DrawingSinglePolicy(algorithm_kind=algorithm_kind).run()
 else:
     logger.info('Ejecutando la versión de múltiples políticas')
-    figure_sequence, dimensions = determine_figure("square 20x20 centered")
-    DrawingMultiplePolicies(figure_sequence, dimensions, algorithm_kind=algorithm_kind).run()
+    #figure_sequence, dimensions = determine_figure("square 20x20 centered")
+    #DrawingMultiplePolicies(figure_sequence, dimensions, algorithm_kind=algorithm_kind).run()
+    DrawingMultiplePolicies(algorithm_kind=algorithm_kind).run()
 
 

@@ -6,20 +6,14 @@ from drawing_strategy import DrawingStrategy
 from algorithm_policy_iteration import PolicyIteration
 from algorithm_value_iteration import ValueIteration
 from algorithm_monte_carlo import MonteCarlo
+from rewards import Rewards, Size
 
 from utils import LoggerManager
 logger = LoggerManager().getLogger()
 
 class DrawingMultiplePolicies(DrawingStrategy):
 
-    def __init__(self, figure_sequence, dimensions, draw=True, algorithm_kind=Algorithm.POLICY_ITERATION):
-        # Inicializo el tablero con todas las recompensas en cero
-        self.figure_sequence = figure_sequence        
-        self.rows, self.columns = dimensions
-        self.rewards_board = [[' ' for _ in range(self.columns)] for _ in range(self.rows)]   
-        self.starting_point = (0, 0)
-        si, sj = self.starting_point
-        self.rewards_board[si][sj] = 'S'
+    def __init__(self, draw=True, algorithm_kind=Algorithm.POLICY_ITERATION):
         self.policies = []
         self.algorithm_kind = algorithm_kind
 
@@ -75,7 +69,7 @@ class DrawingMultiplePolicies(DrawingStrategy):
         self.logo.done()
 
 
-    def create_canvases(self, plot=False):
+    def create_canvases(self, rewards_boards, plot=False):
         """
         Crea la lista de canvas para cada iteración del dibujo. Se debe crear un canvas por cada
         vértice de la figura tomando en cuenta el punto anterior como inicio del siguiente.
@@ -84,30 +78,21 @@ class DrawingMultiplePolicies(DrawingStrategy):
         """
         solutions = []
         
-
-        for iter_num in range(len(self.figure_sequence)):
-            iteration = self.figure_sequence[iter_num]
-            i,j = iteration
-            self.rewards_board[int(i/5)][int(j/5)] = '+1'
-            canvas = Canvas(self.rewards_board)
+        for rewards_board in rewards_boards:
+            canvas = Canvas(rewards_board)
             algorithm = self.train(canvas)
-            solutions += [(canvas, algorithm, self.starting_point),]
+            solutions += [(canvas, algorithm, canvas.initial_state),]
             # En este punto ya se han actualizado las politicas, aqui se debe dibujar hasta el destino.
             if plot:
+                canvas.plot_rainbow()
                 canvas.plot_policy(algorithm.policy)
 
-            # establecemos el inicio para la siguiente iteracion
-            si, sj = self.starting_point
-            self.rewards_board[si][sj] = ' '
-            self.starting_point = (int(i/5) , int(j/5))
-            self.rewards_board[int(i/5)][int(j/5)] = 'S'
-            
-            if(iter_num == len(self.figure_sequence)-1):
-                logger.info("Terminar")
+        logger.info("Terminar")
 
         return solutions
 
 
     def run(self):
-        solutions = self.create_canvases()
+        rewards_boards = Rewards().square(size=Size.M)
+        solutions = self.create_canvases(rewards_boards)
         self.draw(solutions)
