@@ -10,6 +10,7 @@ logger = LoggerManager().getLogger()
 from algorithm_policy_iteration import PolicyIteration
 from algorithm_value_iteration import ValueIteration
 from algorithm_monte_carlo import MonteCarlo
+from algorithm_qlearning import QLearning
 
 class DrawingSinglePolicy(DrawingStrategy):
 
@@ -36,7 +37,7 @@ class DrawingSinglePolicy(DrawingStrategy):
         self.algorithm_kind = algorithm_kind
     
 
-    def train(self, canvas, episodes=10, plot_policies=False):
+    def train(self, canvas, episodes=1000, plot_policies=False):
         '''
         Este método entrena el agente. Es decir, resuelve el MDP a partir del método
         de iteración de políticas a partir de las recompensas que se tienen en el canvas.
@@ -55,10 +56,13 @@ class DrawingSinglePolicy(DrawingStrategy):
             algorithm = PolicyIteration(canvas, plot_policies=plot_policies)
         if self.algorithm_kind == Algorithm.MONTE_CARLO:
             algorithm = MonteCarlo(canvas, episodes=episodes, plot_policies=plot_policies)
+        if self.algorithm_kind == Algorithm.Q_LEARNING:
+            algorithm = QLearning(canvas, episodes=episodes, plot_policies=plot_policies)
         
         algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
         return algorithm
+
 
     def draw(self, algorithm):
         '''

@@ -6,6 +6,7 @@ from drawing_strategy import DrawingStrategy
 from algorithm_policy_iteration import PolicyIteration
 from algorithm_value_iteration import ValueIteration
 from algorithm_monte_carlo import MonteCarlo
+from algorithm_qlearning import QLearning
 from rewards import Rewards, Size
 
 from utils import LoggerManager
@@ -39,6 +40,8 @@ class DrawingMultiplePolicies(DrawingStrategy):
             algorithm = PolicyIteration(canvas)
         if self.algorithm_kind == Algorithm.MONTE_CARLO:
             algorithm = MonteCarlo(canvas, episodes=episodes)
+        if self.algorithm_kind == Algorithm.Q_LEARNING:
+            algorithm = QLearning(canvas, episodes=episodes)
         
         algorithm.run()
         logger.info('Fin del entrenamiento. Calculando la política óptima a partir de las recompensas...')
@@ -86,6 +89,12 @@ class DrawingMultiplePolicies(DrawingStrategy):
             if plot:
                 canvas.plot_rainbow()
                 canvas.plot_policy(algorithm.policy)
+                ##if self.algorithm_kind == Algorithm.Q_LEARNING:
+                ##    actions, values = algorithm.actions_values()
+                ##    algorithm.canvas.plot_action(actions, values)
+                ##else:
+                ##    canvas.plot_rainbow()
+                ##    canvas.plot_policy(algorithm.policy)
 
         logger.info("Terminar")
 

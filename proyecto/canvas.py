@@ -12,6 +12,7 @@ class Canvas:
         self.nrows, self.ncols = len(rewards_board),len(rewards_board[0])
         self.dimensions = (self.nrows, self.ncols)
         self.values_board = [[None for _ in range(self.ncols)] for _ in range(self.nrows)]
+        self.actions = ['left', 'right', 'up', 'down']
 
         for i in range(self.nrows):
             for j in range(self.ncols):
@@ -118,7 +119,7 @@ class Canvas:
 
 
     def plot_rainbow(self):
-        fig1 = plt.figure(figsize=(15, 15))
+        fig1 = plt.figure(figsize=(5, 5))
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
@@ -168,8 +169,20 @@ class Canvas:
         return ""
     
 
+    def action_to_string(self, action):
+        if action == "up":
+            return "^"
+        elif action == "down":
+            return "⌄"
+        elif action == "left":
+            return "<"
+        elif action == "right":
+            return ">"
+        return ""
+    
+
     def plot_policy(self, policy):
-        fig1 = plt.figure(figsize=(15, 15))
+        fig1 = plt.figure(figsize=(7, 7))
         ax1 = fig1.add_subplot(111, aspect='equal')
         
         # Lineas
@@ -198,3 +211,39 @@ class Canvas:
                     ax1.text(j+0.5, self.nrows-i-1+0.5, self.print_policy(i,j, policy), ha='center', va='center', fontsize=6)
         plt.axis("off")
         plt.show()
+
+
+
+    def plot_action(self, actions, values):
+        fig1 = plt.figure(figsize=(10, 10))
+        ax1 = fig1.add_subplot(111, aspect='equal')
+        
+        # Lineas
+        for i in range(0, len(self.values_board)+1):
+            ax1.axhline(i , linewidth=2, color="#2D2D33")
+        for i in range(len(self.values_board[0])+1):
+            ax1.axvline(i , linewidth=2, color="#2D2D33")
+        
+        # Amarillo - inicio
+        (i,j)  = self.initial_state
+        ax1.add_patch(patches.Rectangle((j, self.nrows - i -1), 1, 1, facecolor = "#F6D924"))
+        for j in range(len(self.values_board[0])):
+            for i in range(len(self.values_board)):
+                if self.values_board[i][j] == 1: # verde
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#68FF33"))
+                if self.values_board[i][j] == None: # gris
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#6c7780"))
+                if self.values_board[i][j] == -1: # rojo
+                    ax1.add_patch(patches.Rectangle((j,self.nrows - i -1), 1, 1, facecolor = "#cc0000"))
+        self.reset()
+
+        for i in range(len(self.values_board)):
+            for j in range(len(self.values_board[0])):
+                if self.values_board[i][j] == None:
+                    ax1.text(i+0.5, j+0.5, "", ha='center', va='center')
+                else:
+                    ax1.text(j+0.5, self.nrows-i-1+0.5, str(round(values[(i, j)],2)), ha='center', va='center')
+                    text2 = self.action_to_string(actions[(i,j)])
+                    ax1.text(j+0.5, self.nrows-i-1+0.25, text2, ha='center', va='center')
+        plt.axis("off")
+        plt.show() 

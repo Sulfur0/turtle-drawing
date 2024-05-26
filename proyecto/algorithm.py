@@ -45,4 +45,4 @@ class Algorithm(Enum):
     VALUE_ITERATION = 1
     POLICY_ITERATION = 2
     MONTE_CARLO = 3
-    TEMPORAL_DIFFERENCE = 4
+    Q_LEARNING = 4

@@ -9,12 +9,11 @@ class Size(Enum):
 
 class Rewards:
 
-
     def square(self, size=Size.S, single_trace=False):
         '''
-        Retorna un tablero con las recompensas necesarias para dibujar un 
-        cuadrado. El tablero tiene dimensiones de 100x100. El cuadrado está
-        centrado en el tablero. y tiene dimensiones de 80x80. 
+        Retorna un conjunto de tableros con las recompensas necesarias para dibujar un 
+        cuadrado. El cuadrado está centrado en el tablero. Las dimensiones del cuadrado
+        dependen del tamaño seleccionado en el parametro 'size'. 
 
         Entradas:
         ----------------
